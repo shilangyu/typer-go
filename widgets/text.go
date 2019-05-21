@@ -47,3 +47,17 @@ func (w *Text) Layout(g *gocui.Gui) error {
 
 	return nil
 }
+
+// ChangeText changes the text within
+func (w *Text) ChangeText(s string) func(g *gocui.Gui) error {
+	return func(g *gocui.Gui) error {
+		v, err := g.View(w.Name)
+		if err != nil {
+			return err
+		}
+		v.Clear()
+		fmt.Fprint(v, s)
+
+		return nil
+	}
+}
