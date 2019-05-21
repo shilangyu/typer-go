@@ -10,6 +10,7 @@ import (
 
 	"github.com/common-nighthawk/go-figure"
 	"github.com/jroimartin/gocui"
+	"github.com/shilangyu/typeracer-go/widgets"
 )
 
 func main() {
@@ -21,7 +22,12 @@ func main() {
 
 	g.Mouse = true
 
-	g.SetManagerFunc(layout)
+	w, h := g.Size()
+
+	// main menu views
+	text := widgets.NewText("sign", figure.NewFigure("typeracer", "", false).String(), true, true, w/2, h/5)
+	g.SetManager(text)
+	// g.SetManagerFunc(layout)
 
 	if err := keybindings(g); err != nil {
 		log.Panicln(err)
@@ -36,15 +42,6 @@ func layout(g *gocui.Gui) error {
 	w, h := g.Size()
 
 	xoff, yoff := 33, 7
-	if v, err := g.SetView("sign", w/2-xoff, 2, w/2+xoff, 2+yoff); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-
-		text := figure.NewFigure("typeracer", "", false).String()
-		fmt.Fprint(v, text)
-	}
-
 	xoff, yoff = 7, 3
 	if v, err := g.SetView("menu", w/2-xoff, h/2-yoff, w/2+xoff, h/2+yoff-1); err != nil {
 		if err != gocui.ErrUnknownView {
