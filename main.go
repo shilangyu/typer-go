@@ -10,6 +10,7 @@ import (
 
 	"github.com/common-nighthawk/go-figure"
 	"github.com/jroimartin/gocui"
+	"github.com/shilangyu/typeracer-go/utils"
 	"github.com/shilangyu/typeracer-go/widgets"
 )
 
@@ -25,7 +26,7 @@ func main() {
 	// main menu views
 	sign := widgets.NewText("sign", figure.NewFigure("typeracer", "", false).String(), true, true, w/2, h/5)
 	menuItems := []string{"single player", "multi player", "settings", "exit"}
-	menu := widgets.NewMenu("menu", menuItems, w/2, h/2, true, true, nil)
+	menu := widgets.NewMenu("menu", utils.Center(menuItems), w/2, h/2, true, true, nil)
 	g.SetManager(sign, menu)
 
 	err = menu.Init(g)

@@ -16,3 +16,16 @@ func StringDimensions(s string) (w, h int) {
 
 	return
 }
+
+// Center takes an array of strings and adds spaces to center them
+func Center(s []string) (res []string) {
+	maxW, _ := StringDimensions(strings.Join(s, "\n"))
+
+	for _, text := range s {
+		diff := maxW - len(text)
+		text = strings.Repeat(" ", diff/2) + text + strings.Repeat(" ", diff-diff/2)
+		res = append(res, text)
+	}
+
+	return
+}
