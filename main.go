@@ -15,9 +15,7 @@ import (
 
 func main() {
 	g, err := gocui.NewGui(gocui.OutputNormal)
-	if err != nil {
-		log.Panicln(err)
-	}
+	utils.Check(err)
 	defer g.Close()
 
 	w, h := g.Size()
@@ -41,13 +39,10 @@ func main() {
 	g.SetManager(sign, menu, info)
 
 	err = menu.Init(g)
-	if err != nil {
-		log.Panicln(err)
-	}
+	utils.Check(err)
 
-	if err := keybindings(g); err != nil {
-		log.Panicln(err)
-	}
+	err = keybindings(g)
+	utils.Check(err)
 
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Panicln(err)
