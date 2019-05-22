@@ -6,6 +6,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/common-nighthawk/go-figure"
 	"github.com/jroimartin/gocui"
@@ -34,12 +35,13 @@ func main() {
 	menuItems := []string{"single player", "multi player", "settings", "exit"}
 	menu := widgets.NewMenu("menu", utils.Center(menuItems), w/2, h/2, true, true, func(i int) {
 		g.Update(info.ChangeText(infoItems[i]))
-	}, func(i int, g *gocui.Gui, v *gocui.View) error {
+	}, func(i int) {
 		switch i {
 		case 3:
-			return gocui.ErrQuit
+			g.Close()
+			os.Exit(0)
 		default:
-			return nil
+
 		}
 	})
 
