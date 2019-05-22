@@ -34,6 +34,13 @@ func main() {
 	menuItems := []string{"single player", "multi player", "settings", "exit"}
 	menu := widgets.NewMenu("menu", utils.Center(menuItems), w/2, h/2, true, true, func(i int) {
 		g.Update(info.ChangeText(infoItems[i]))
+	}, func(i int, g *gocui.Gui, v *gocui.View) error {
+		switch i {
+		case 3:
+			return gocui.ErrQuit
+		default:
+			return nil
+		}
 	})
 
 	g.SetManager(sign, menu, info)

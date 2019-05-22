@@ -17,12 +17,13 @@ type Menu struct {
 	Center   bool
 	Arrows   bool
 	OnChange func(i int)
+	OnSubmit func(i int, g *gocui.Gui, v *gocui.View) error
 	currItem int
 }
 
 // NewMenu initializes the Menu widget
 // if arrows is true menu will be controlled through arrows as well
-func NewMenu(name string, items []string, x, y int, center, arrows bool, onChange func(i int)) *Menu {
+func NewMenu(name string, items []string, x, y int, center, arrows bool, onChange func(i int), onSubmit func(i int, g *gocui.Gui, v *gocui.View) error) *Menu {
 	w, h := utils.StringDimensions(strings.Join(items, "\n"))
 	w++
 	h++
@@ -32,7 +33,7 @@ func NewMenu(name string, items []string, x, y int, center, arrows bool, onChang
 		y = y - h/2
 	}
 
-	return &Menu{name, items, x, y, w, h, center, arrows, onChange, 0}
+	return &Menu{name, items, x, y, w, h, center, arrows, onChange, onSubmit, 0}
 }
 
 // Init initializes the gocui side of things
@@ -40,6 +41,11 @@ func (w *Menu) Init(g *gocui.Gui) error {
 	g.Mouse = true
 
 	if err := g.SetKeybinding(w.Name, gocui.MouseLeft, gocui.ModNone, w.onMouse); err != nil {
+		return err
+	}
+	if err := g.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
+		return w.OnSubmit(w.currItem, g, v)
+	}); err != nil {
 		return err
 	}
 
