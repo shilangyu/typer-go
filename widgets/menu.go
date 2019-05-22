@@ -43,17 +43,17 @@ func (w *Menu) Init(g *gocui.Gui) error {
 	if err := g.SetKeybinding(w.Name, gocui.MouseLeft, gocui.ModNone, w.onMouse); err != nil {
 		return err
 	}
-	if err := g.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
-		return w.OnSubmit(w.currItem, g, v)
-	}); err != nil {
-		return err
-	}
 
 	if w.Arrows {
 		if err := g.SetKeybinding("", gocui.KeyArrowDown, gocui.ModNone, w.onArrow(1)); err != nil {
 			return err
 		}
 		if err := g.SetKeybinding("", gocui.KeyArrowUp, gocui.ModNone, w.onArrow(-1)); err != nil {
+			return err
+		}
+		if err := g.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
+			return w.OnSubmit(w.currItem, g, v)
+		}); err != nil {
 			return err
 		}
 	}
@@ -87,13 +87,16 @@ func (w *Menu) onArrow(change int) func(g *gocui.Gui, v *gocui.View) error {
 
 // handles mouse event
 func (w *Menu) onMouse(g *gocui.Gui, v *gocui.View) error {
-	if _, currItem := v.Cursor(); currItem != w.currItem {
+
+	_, currItem := v.Cursor()
+	if currItem != w.currItem {
 		w.currItem = currItem
 		if w.OnChange != nil {
 			w.OnChange(w.currItem)
 		}
+	} else {
+		return w.OnSubmit(currItem, g, v)
 	}
-
 	return nil
 }
 
