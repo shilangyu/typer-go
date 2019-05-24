@@ -37,7 +37,7 @@ func NewMenu(name string, items []string, x, y int, center, arrows bool, onChang
 }
 
 // Name returns the widget name
-func (w * Menu) Name() string {
+func (w *Menu) Name() string {
 	return w.name
 }
 

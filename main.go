@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"github.com/jroimartin/gocui"
-	"github.com/shilangyu/typeracer-go/utils"
 	"github.com/shilangyu/typeracer-go/ui"
+	"github.com/shilangyu/typeracer-go/utils"
 )
 
 func main() {

@@ -34,7 +34,7 @@ func NewText(name, text string, frame, center bool, x, y int) *Text {
 }
 
 // Name returns the widget name
-func (w * Text) Name() string {
+func (w *Text) Name() string {
 	return w.name
 }
 

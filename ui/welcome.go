@@ -9,7 +9,6 @@ import (
 	"github.com/shilangyu/typeracer-go/widgets"
 )
 
-
 // CreateWelcome creates welcome screen widgets
 func CreateWelcome(g *gocui.Gui) error {
 	w, h := g.Size()
@@ -37,16 +36,14 @@ func CreateWelcome(g *gocui.Gui) error {
 
 		}
 	})
-	
-	
+
 	g.SetManager(sign, menu, info)
-	
+
 	err := menu.Init(g)
 	if err != nil {
 		return err
 	}
-	
-	
+
 	screen = append(screen, menu, info, sign)
 	return nil
 }
