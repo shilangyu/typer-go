@@ -10,13 +10,13 @@ func CreateSingleplayer(g *gocui.Gui) error {
 	w, h := g.Size()
 
 	stats := [...]*widgets.Text{
-		widgets.NewText("singleplayer-stats-wpm", "wpm: 0", false, true, w/10, h/10),
-		widgets.NewText("singleplayer-stats-time", "time: 0", false, true, w/10, h/10+1),
+		widgets.NewText("singleplayer-stats-wpm", "wpm: 0", false, false, 2, 1),
+		widgets.NewText("singleplayer-stats-time", "time: 0", false, false, 2, 2),
 	}
 
-	text := widgets.NewText("singleplayer-text", "Cock and balls", true, false, w/8, h/8)
+	text := widgets.NewText("singleplayer-text", "Cock and balls", true, false, w/5+1, 0)
 
-	input := widgets.NewInput("singleplayer-input", true, false, w/8, h-5, w-w/8, 3)
+	input := widgets.NewInput("singleplayer-input", true, false, w/5+1, h-h/6, w-w/5-1, h/6)
 
 	g.SetManager(text, input, stats[0], stats[1])
 
