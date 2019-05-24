@@ -22,6 +22,5 @@ func CreateSingleplayer(g *gocui.Gui) error {
 		return err
 	}
 
-	screen = []widgets.Widget{text, stats[0], stats[1]}
 	return nil
 }

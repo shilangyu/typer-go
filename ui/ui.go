@@ -1,12 +1,6 @@
 package ui
 
-import "github.com/shilangyu/typeracer-go/widgets"
-import	"github.com/jroimartin/gocui"
- 
-
-// screen is a collection of current views
-var screen []widgets.Widget
-
+import "github.com/jroimartin/gocui"
 
 func keybindings(g *gocui.Gui) error {
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {

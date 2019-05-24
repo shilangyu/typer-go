@@ -48,6 +48,5 @@ func CreateWelcome(g *gocui.Gui) error {
 		return err
 	}
 
-	screen = []widgets.Widget{menu, info, sign}
 	return nil
 }
