@@ -1,7 +1,6 @@
 package widgets
 
 import (
-
 	"github.com/jroimartin/gocui"
 )
 
