@@ -10,19 +10,12 @@ import (
 )
 
 
-// names of the welcome screen views
-const (
-	SIGN_VIEW      = "welcome-sign"
-	MAIN_MENU_VIEW = "welcome-main-menu"
-	MENU_INFO_VIEW = "welcome-menu-info"
-)
-
 // CreateWelcome creates welcome screen widgets
 func CreateWelcome(g *gocui.Gui) error {
 	w, h := g.Size()
 
 	// main menu views
-	sign := widgets.NewText("sign", figure.NewFigure("typeracer", "", false).String(), false, true, w/2, h/5)
+	sign := widgets.NewText("welcome-sign", figure.NewFigure("typeracer", "", false).String(), false, true, w/2, h/5)
 
 	infoItems := utils.Center([]string{
 		"Single player mode - test your typing skills offline!",
@@ -30,10 +23,10 @@ func CreateWelcome(g *gocui.Gui) error {
 		"Settings - change app settings",
 		"Exit - exit the app",
 	})
-	info := widgets.NewText("info", infoItems[0], true, true, w/2, 3*h/4)
+	info := widgets.NewText("welcome-menu-info", infoItems[0], true, true, w/2, 3*h/4)
 
 	menuItems := []string{"single player", "multi player", "settings", "exit"}
-	menu := widgets.NewMenu("menu", utils.Center(menuItems), w/2, h/2, true, true, func(i int) {
+	menu := widgets.NewMenu("welcome-main-menu", utils.Center(menuItems), w/2, h/2, true, true, func(i int) {
 		g.Update(info.ChangeText(infoItems[i]))
 	}, func(i int) {
 		switch i {
