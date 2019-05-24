@@ -10,10 +10,10 @@ import (
 
 // Menu is a widget that creates a vertical clickable menu
 type Menu struct {
-	Name     string
+	name     string
 	Items    []string
-	X, Y     int
-	W, H     int
+	x, y     int
+	w, h     int
 	Center   bool
 	Arrows   bool
 	OnChange func(i int)
@@ -36,22 +36,37 @@ func NewMenu(name string, items []string, x, y int, center, arrows bool, onChang
 	return &Menu{name, items, x, y, w, h, center, arrows, onChange, onSubmit, 0}
 }
 
+// Name returns the widget name
+func (w * Menu) Name() string {
+	return w.name
+}
+
+// Coord returns the x and y of the widget
+func (w *Menu) Coord() (int, int) {
+	return w.x, w.y
+}
+
+// Size returns the width and height of the widget
+func (w *Menu) Size() (int, int) {
+	return w.w, w.h
+}
+
 // Init initializes the gocui side of things
 func (w *Menu) Init(g *gocui.Gui) error {
 	g.Mouse = true
 
-	if err := g.SetKeybinding(w.Name, gocui.MouseLeft, gocui.ModNone, w.onMouse); err != nil {
+	if err := g.SetKeybinding(w.name, gocui.MouseLeft, gocui.ModNone, w.onMouse); err != nil {
 		return err
 	}
 
 	if w.Arrows {
-		if err := g.SetKeybinding(w.Name, gocui.KeyArrowDown, gocui.ModNone, w.onArrow(1)); err != nil {
+		if err := g.SetKeybinding(w.name, gocui.KeyArrowDown, gocui.ModNone, w.onArrow(1)); err != nil {
 			return err
 		}
-		if err := g.SetKeybinding(w.Name, gocui.KeyArrowUp, gocui.ModNone, w.onArrow(-1)); err != nil {
+		if err := g.SetKeybinding(w.name, gocui.KeyArrowUp, gocui.ModNone, w.onArrow(-1)); err != nil {
 			return err
 		}
-		if err := g.SetKeybinding(w.Name, gocui.KeyEnter, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
+		if err := g.SetKeybinding(w.name, gocui.KeyEnter, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
 			w.OnSubmit(w.currItem)
 			return nil
 		}); err != nil {
@@ -71,7 +86,7 @@ func (w *Menu) onArrow(change int) func(g *gocui.Gui, v *gocui.View) error {
 		} else if w.currItem == len(w.Items) {
 			w.currItem--
 		} else {
-			v, err := g.View(w.Name)
+			v, err := g.View(w.name)
 			if err != nil {
 				return err
 			}
@@ -102,12 +117,12 @@ func (w *Menu) onMouse(g *gocui.Gui, v *gocui.View) error {
 
 // Layout renders the Menu widget
 func (w *Menu) Layout(g *gocui.Gui) error {
-	v, err := g.SetView(w.Name, w.X, w.Y, w.X+w.W, w.Y+w.H)
+	v, err := g.SetView(w.name, w.x, w.y, w.x+w.w, w.y+w.h)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		g.SetCurrentView(w.Name)
+		g.SetCurrentView(w.name)
 
 		v.Highlight = true
 		v.SelBgColor = gocui.ColorGreen
