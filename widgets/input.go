@@ -18,9 +18,9 @@ type Input struct {
 // if frame is true a border is rendered
 // if center is true x and y becomes the center not start
 func NewInput(name string, frame, center bool, x, y int, w, h int) *Input {
-	w++
-	h++
-
+	w--
+	h--
+	
 	if center {
 		x = x - w/2
 		y = y - h/2
