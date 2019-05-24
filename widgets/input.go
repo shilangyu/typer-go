@@ -45,7 +45,7 @@ func (w *Input) Size() (int, int) {
 	return w.w, w.h
 }
 
-// Layout renders the Text widget
+// Layout renders the Input widget
 func (w *Input) Layout(g *gocui.Gui) error {
 	g.Cursor = true
 
