@@ -13,7 +13,6 @@ import (
 func CreateWelcome(g *gocui.Gui) error {
 	w, h := g.Size()
 
-	// main menu views
 	sign := widgets.NewText("welcome-sign", figure.NewFigure("typeracer", "", false).String(), false, true, w/2, h/5)
 
 	infoItems := utils.Center([]string{
@@ -29,6 +28,8 @@ func CreateWelcome(g *gocui.Gui) error {
 		g.Update(info.ChangeText(infoItems[i]))
 	}, func(i int) {
 		switch i {
+		case 0:
+			CreateSingleplayer(g)
 		case 3:
 			g.Close()
 			os.Exit(0)
@@ -39,11 +40,14 @@ func CreateWelcome(g *gocui.Gui) error {
 
 	g.SetManager(sign, menu, info)
 
-	err := menu.Init(g)
-	if err != nil {
+	if err := menu.Init(g); err != nil {
 		return err
 	}
 
-	screen = append(screen, menu, info, sign)
+	if err := keybindings(g); err != nil {
+		return err
+	}
+
+	screen = []widgets.Widget{menu, info, sign}
 	return nil
 }
