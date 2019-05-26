@@ -13,7 +13,7 @@ import (
 func CreateWelcome(g *gocui.Gui) error {
 	w, h := g.Size()
 
-	sign := widgets.NewText("welcome-sign", figure.NewFigure("typer-go", "", false).String(), false, true, w/2, h/5)
+	signWi := widgets.NewText("welcome-sign", figure.NewFigure("typer-go", "", false).String(), false, true, w/2, h/5)
 
 	infoItems := utils.Center([]string{
 		"Single player mode - test your typing skills offline!",
@@ -21,11 +21,11 @@ func CreateWelcome(g *gocui.Gui) error {
 		"Settings - change app settings",
 		"Exit - exit the app",
 	})
-	info := widgets.NewText("welcome-menu-info", infoItems[0], true, true, w/2, 3*h/4)
+	infoWi := widgets.NewText("welcome-menu-info", infoItems[0], true, true, w/2, 3*h/4)
 
 	menuItems := []string{"single player", "multi player", "settings", "exit"}
-	menu := widgets.NewMenu("welcome-main-menu", utils.Center(menuItems), w/2, h/2, true, true, func(i int) {
-		g.Update(info.ChangeText(infoItems[i]))
+	menuWi := widgets.NewMenu("welcome-main-menu", utils.Center(menuItems), w/2, h/2, true, true, func(i int) {
+		g.Update(infoWi.ChangeText(infoItems[i]))
 	}, func(i int) {
 		switch i {
 		case 0:
@@ -38,9 +38,9 @@ func CreateWelcome(g *gocui.Gui) error {
 		}
 	})
 
-	g.SetManager(sign, menu, info)
+	g.SetManager(signWi, menuWi, infoWi)
 
-	if err := menu.Init(g); err != nil {
+	if err := menuWi.Init(g); err != nil {
 		return err
 	}
 
