@@ -6,7 +6,7 @@ import (
 	"github.com/common-nighthawk/go-figure"
 	"github.com/jroimartin/gocui"
 	"github.com/shilangyu/typeracer-go/utils"
-	"github.com/shilangyu/typeracer-go/widgets"
+	"github.com/shilangyu/gocui-widgets"
 )
 
 // CreateWelcome creates welcome screen widgets

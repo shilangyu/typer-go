@@ -2,7 +2,7 @@ package ui
 
 import (
 	"github.com/jroimartin/gocui"
-	"github.com/shilangyu/typeracer-go/widgets"
+	"github.com/shilangyu/gocui-widgets"
 )
 
 // CreateSingleplayer creates welcome screen widgets
