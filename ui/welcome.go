@@ -5,15 +5,15 @@ import (
 
 	"github.com/common-nighthawk/go-figure"
 	"github.com/jroimartin/gocui"
-	"github.com/shilangyu/typeracer-go/utils"
-	"github.com/shilangyu/gocui-widgets"
+	widgets "github.com/shilangyu/gocui-widgets"
+	"github.com/shilangyu/typer-go/utils"
 )
 
 // CreateWelcome creates welcome screen widgets
 func CreateWelcome(g *gocui.Gui) error {
 	w, h := g.Size()
 
-	sign := widgets.NewText("welcome-sign", figure.NewFigure("typeracer", "", false).String(), false, true, w/2, h/5)
+	sign := widgets.NewText("welcome-sign", figure.NewFigure("typer-go", "", false).String(), false, true, w/2, h/5)
 
 	infoItems := utils.Center([]string{
 		"Single player mode - test your typing skills offline!",

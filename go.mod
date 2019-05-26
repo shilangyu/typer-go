@@ -1,4 +1,4 @@
-module github.com/shilangyu/typeracer-go
+module github.com/shilangyu/typer-go
 
 go 1.12
 
