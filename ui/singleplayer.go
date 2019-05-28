@@ -37,7 +37,22 @@ func CreateSingleplayer(g *gocui.Gui) error {
 			currWord++
 			g.Update(inputWi.ChangeText(""))
 		} else {
-			//
+			ansiWord := ""
+			for i := range b {
+				if i >= len(words[currWord]) || b[i] != words[currWord][i] {
+					ansiWord += "\u001b[31m"
+				} else {
+					ansiWord += "\u001b[32m"
+				}
+				ansiWord += string(b[i])
+			}
+			ansiWord += "\u001b[0m"
+
+			if len(b) < len(words[currWord]) {
+				ansiWord += words[currWord][len(b):]
+			}
+
+			g.Update(textWis[currWord].ChangeText(ansiWord))
 		}
 	})
 
