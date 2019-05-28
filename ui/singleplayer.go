@@ -18,7 +18,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 	textWi := widgets.NewText("singleplayer-text", "Cock and balls", true, false, w/5+1, 0)
 
-	inputWi := widgets.NewInput("singleplayer-input", true, false, w/5+1, h-h/6, w-w/5-1, h/6)
+	inputWi := widgets.NewInput("singleplayer-input", true, false, w/5+1, h-h/6, w-w/5-1, h/6, nil)
 
 	g.SetManager(textWi, inputWi, statsFrameWi, statWis[0], statWis[1])
 

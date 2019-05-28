@@ -8,3 +8,5 @@ github.com/nsf/termbox-go v0.0.0-20190325093121-288510b9734e h1:Vbib8wJAaMEF9jus
 github.com/nsf/termbox-go v0.0.0-20190325093121-288510b9734e/go.mod h1:IuKpRQcYE1Tfu+oAQqaLisqDeXgjyyltCfsaoYN18NQ=
 github.com/shilangyu/gocui-widgets v0.0.0-20190526181445-4288e5a8eb15 h1:9Wm1MIpkDqjCRYXlihrKikVZooQUcBEO+ZUgIk4kCCY=
 github.com/shilangyu/gocui-widgets v0.0.0-20190526181445-4288e5a8eb15/go.mod h1:CRPH8u2d1PtkKLwrsDwCke1fTzjOq9+A5gKUZZVkUrg=
+github.com/shilangyu/gocui-widgets v0.0.0-20190528174814-287f5d25bc37 h1:86LkBs7Sgd65S9O2ofavAxLBjiZXNOxFKhPx1SOkmz0=
+github.com/shilangyu/gocui-widgets v0.0.0-20190528174814-287f5d25bc37/go.mod h1:CRPH8u2d1PtkKLwrsDwCke1fTzjOq9+A5gKUZZVkUrg=

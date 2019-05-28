@@ -12,6 +12,7 @@ import (
 // CreateWelcome creates welcome screen widgets
 func CreateWelcome(g *gocui.Gui) error {
 	w, h := g.Size()
+	g.Mouse = true
 
 	signWi := widgets.NewText("welcome-sign", figure.NewFigure("typer-go", "", false).String(), false, true, w/2, h/5)
 
@@ -39,10 +40,6 @@ func CreateWelcome(g *gocui.Gui) error {
 	})
 
 	g.SetManager(signWi, menuWi, infoWi)
-
-	if err := menuWi.Init(g); err != nil {
-		return err
-	}
 
 	if err := keybindings(g); err != nil {
 		return err
