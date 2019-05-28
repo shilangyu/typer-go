@@ -25,15 +25,16 @@ func CreateSingleplayer(g *gocui.Gui) error {
 	points := organiseText(words, 4*w/5)
 	var textWis []*widgets.Text
 	for i, p := range points {
+		words[i] += " "
 		textWis = append(textWis, widgets.NewText("singleplayer-text-"+strconv.Itoa(i), words[i], false, false, w/5+1+p.x, p.y))
 	}
 
 	var inputWi *widgets.Input
 	inputWi = widgets.NewInput("singleplayer-input", true, false, w/5+1, h-h/6, w-w/5-1, h/6, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) {
-		if key == gocui.KeySpace || key == gocui.KeyEnter {
-			if v.Buffer() != " " {
-				currWord++
-			}
+		b := v.Buffer()[:len(v.Buffer())-1]
+
+		if key == gocui.KeySpace && b == words[currWord] {
+			currWord++
 			g.Update(inputWi.ChangeText(""))
 		} else {
 			//
