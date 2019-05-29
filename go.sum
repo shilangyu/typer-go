@@ -6,13 +6,5 @@ github.com/mattn/go-runewidth v0.0.4 h1:2BvfKmzob6Bmd4YsL0zygOqfdFnK7GR4QL06Do4/
 github.com/mattn/go-runewidth v0.0.4/go.mod h1:LwmH8dsx7+W8Uxz3IHJYH5QSwggIsqBzpuz5H//U1FU=
 github.com/nsf/termbox-go v0.0.0-20190325093121-288510b9734e h1:Vbib8wJAaMEF9jusI/kMSYMr/LtRzM7+F9MJgt/nH8k=
 github.com/nsf/termbox-go v0.0.0-20190325093121-288510b9734e/go.mod h1:IuKpRQcYE1Tfu+oAQqaLisqDeXgjyyltCfsaoYN18NQ=
-github.com/shilangyu/gocui-widgets v0.0.0-20190526181445-4288e5a8eb15 h1:9Wm1MIpkDqjCRYXlihrKikVZooQUcBEO+ZUgIk4kCCY=
-github.com/shilangyu/gocui-widgets v0.0.0-20190526181445-4288e5a8eb15/go.mod h1:CRPH8u2d1PtkKLwrsDwCke1fTzjOq9+A5gKUZZVkUrg=
-github.com/shilangyu/gocui-widgets v0.0.0-20190528174814-287f5d25bc37 h1:86LkBs7Sgd65S9O2ofavAxLBjiZXNOxFKhPx1SOkmz0=
-github.com/shilangyu/gocui-widgets v0.0.0-20190528174814-287f5d25bc37/go.mod h1:CRPH8u2d1PtkKLwrsDwCke1fTzjOq9+A5gKUZZVkUrg=
-github.com/shilangyu/gocui-widgets v1.0.0 h1:fOlK56uTkDa0f070q6IjGxd80BGBi8brAufsy8d6ZRQ=
-github.com/shilangyu/gocui-widgets v1.0.0/go.mod h1:CRPH8u2d1PtkKLwrsDwCke1fTzjOq9+A5gKUZZVkUrg=
 github.com/shilangyu/gocui-widgets v1.1.0 h1:FuNUnGyK65ViZVXJsfwKyUg+0kbY5VfXWnPZNS8wI2o=
 github.com/shilangyu/gocui-widgets v1.1.0/go.mod h1:CRPH8u2d1PtkKLwrsDwCke1fTzjOq9+A5gKUZZVkUrg=
-github.com/skanehira/gocui-component v0.0.0-20190406233618-9b1c71353c96 h1:iNHvqWqQWIQ0wdWkcHW2sQhvRaVlCrnFmUftk7LcbrE=
-github.com/skanehira/gocui-component v0.0.0-20190406233618-9b1c71353c96/go.mod h1:uhDvc/srGKwvK9bGt4zlfTiywMLL7ngz44Yp2nQwTjE=
