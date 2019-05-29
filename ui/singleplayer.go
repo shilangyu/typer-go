@@ -21,6 +21,8 @@ func CreateSingleplayer(g *gocui.Gui) error {
 		widgets.NewText("singleplayer-stats-time", "time: 0", false, false, 2, 2),
 	}
 
+	textFrameWi := widgets.NewCollection("singleplayer-text", "", false, w/5+1, 0, 4*w/5, 5*h/6+1)
+
 	words := strings.Split("Cock and balls", " ")
 	points := organiseText(words, 4*w/5)
 	var textWis []*widgets.Text
@@ -55,6 +57,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 	for _, stat := range statWis {
 		wis = append(wis, stat)
 	}
+	wis = append(wis, textFrameWi)
 	for _, text := range textWis {
 		wis = append(wis, text)
 	}
