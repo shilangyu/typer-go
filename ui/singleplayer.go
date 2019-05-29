@@ -38,26 +38,13 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 		b := v.Buffer()[:len(v.Buffer())-1]
 
+		ansiWord := wordsDiff(words[currWord], b)
+
+		g.Update(textWis[currWord].ChangeText(ansiWord))
+
 		if key == gocui.KeySpace && b == words[currWord] {
 			currWord++
 			g.Update(inputWi.ChangeText(""))
-		} else {
-			ansiWord := ""
-			for i := range b {
-				if i >= len(words[currWord]) || b[i] != words[currWord][i] {
-					ansiWord += "\u001b[31m"
-				} else {
-					ansiWord += "\u001b[32m"
-				}
-				ansiWord += string(b[i])
-			}
-			ansiWord += "\u001b[0m"
-
-			if len(b) < len(words[currWord]) {
-				ansiWord += words[currWord][len(b):]
-			}
-
-			g.Update(textWis[currWord].ChangeText(ansiWord))
 		}
 
 		return false
@@ -92,6 +79,24 @@ func organiseText(words []string, lineLength int) (points []struct{ x, y int }) 
 		}
 		points = append(points, struct{ x, y int }{x, y})
 		x += len(word) + 1
+	}
+
+	return
+}
+
+func wordsDiff(toColor, differ string) (ansiWord string) {
+	for i := range differ {
+		if i >= len(toColor) || differ[i] != toColor[i] {
+			ansiWord += "\u001b[41m"
+		} else {
+			ansiWord += "\u001b[42m"
+		}
+		ansiWord += string(differ[i])
+	}
+	ansiWord += "\u001b[0m"
+
+	if len(differ) < len(toColor) {
+		ansiWord += toColor[len(differ):]
 	}
 
 	return
