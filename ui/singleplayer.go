@@ -30,7 +30,12 @@ func CreateSingleplayer(g *gocui.Gui) error {
 	}
 
 	var inputWi *widgets.Input
-	inputWi = widgets.NewInput("singleplayer-input", true, false, w/5+1, h-h/6, w-w/5-1, h/6, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) {
+	inputWi = widgets.NewInput("singleplayer-input", true, false, w/5+1, h-h/6, w-w/5-1, h/6, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
+		if key == gocui.KeyEnter {
+			return false
+		}
+		gocui.DefaultEditor.Edit(v, key, ch, mod)
+
 		b := v.Buffer()[:len(v.Buffer())-1]
 
 		if key == gocui.KeySpace && b == words[currWord] {
@@ -54,6 +59,8 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 			g.Update(textWis[currWord].ChangeText(ansiWord))
 		}
+
+		return false
 	})
 
 	var wis []gocui.Manager

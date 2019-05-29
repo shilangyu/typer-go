@@ -12,5 +12,7 @@ github.com/shilangyu/gocui-widgets v0.0.0-20190528174814-287f5d25bc37 h1:86LkBs7
 github.com/shilangyu/gocui-widgets v0.0.0-20190528174814-287f5d25bc37/go.mod h1:CRPH8u2d1PtkKLwrsDwCke1fTzjOq9+A5gKUZZVkUrg=
 github.com/shilangyu/gocui-widgets v1.0.0 h1:fOlK56uTkDa0f070q6IjGxd80BGBi8brAufsy8d6ZRQ=
 github.com/shilangyu/gocui-widgets v1.0.0/go.mod h1:CRPH8u2d1PtkKLwrsDwCke1fTzjOq9+A5gKUZZVkUrg=
+github.com/shilangyu/gocui-widgets v1.1.0 h1:FuNUnGyK65ViZVXJsfwKyUg+0kbY5VfXWnPZNS8wI2o=
+github.com/shilangyu/gocui-widgets v1.1.0/go.mod h1:CRPH8u2d1PtkKLwrsDwCke1fTzjOq9+A5gKUZZVkUrg=
 github.com/skanehira/gocui-component v0.0.0-20190406233618-9b1c71353c96 h1:iNHvqWqQWIQ0wdWkcHW2sQhvRaVlCrnFmUftk7LcbrE=
 github.com/skanehira/gocui-component v0.0.0-20190406233618-9b1c71353c96/go.mod h1:uhDvc/srGKwvK9bGt4zlfTiywMLL7ngz44Yp2nQwTjE=
