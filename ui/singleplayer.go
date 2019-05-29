@@ -69,6 +69,8 @@ func CreateSingleplayer(g *gocui.Gui) error {
 	return nil
 }
 
+// takes a slice of words and length of a line
+// retuns xs and ys of the words on a plane
 func organiseText(words []string, lineLength int) (points []struct{ x, y int }) {
 	x, y := 0, 0
 
@@ -84,6 +86,7 @@ func organiseText(words []string, lineLength int) (points []struct{ x, y int }) 
 	return
 }
 
+// adds ANSI colors to indicate diff
 func wordsDiff(toColor, differ string) (ansiWord string) {
 	for i := range differ {
 		if i >= len(toColor) || differ[i] != toColor[i] {
