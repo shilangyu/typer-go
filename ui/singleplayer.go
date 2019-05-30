@@ -23,7 +23,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 	textFrameWi := widgets.NewCollection("singleplayer-text", "", false, w/5+1, 0, 4*w/5, 5*h/6+1)
 
-	words := strings.Split("Cock and balls", " ")
+	words := strings.Split("Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls", " ")
 	points := organiseText(words, 4*w/5)
 	var textWis []*widgets.Text
 	for i, p := range points {
@@ -38,7 +38,10 @@ func CreateSingleplayer(g *gocui.Gui) error {
 		}
 		gocui.DefaultEditor.Edit(v, key, ch, mod)
 
-		b := v.Buffer()[:len(v.Buffer())-1]
+		var b string
+		if len(v.Buffer()) != 0 && key != gocui.KeyDelete {
+			b = v.Buffer()[:len(v.Buffer())-1]
+		}
 
 		ansiWord := wordsDiff(words[currWord], b)
 
