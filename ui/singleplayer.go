@@ -24,7 +24,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 	textFrameWi := widgets.NewCollection("singleplayer-text", "", false, w/5+1, 0, 4*w/5, 5*h/6+1)
 
 	words := strings.Split("Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls", " ")
-	points := organiseText(words, 4*w/5)
+	points := organiseText(words, 4*w/5-2)
 	var textWis []*widgets.Text
 	for i, p := range points {
 		words[i] += " "
@@ -33,7 +33,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 	var inputWi *widgets.Input
 	inputWi = widgets.NewInput("singleplayer-input", true, false, w/5+1, h-h/6, w-w/5-1, h/6, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
-		if key == gocui.KeyEnter || len(v.Buffer()) == 0 && key == gocui.KeyDelete {
+		if key == gocui.KeyEnter || len(v.Buffer()) == 0 && ch == 0 {
 			return false
 		}
 		gocui.DefaultEditor.Edit(v, key, ch, mod)
