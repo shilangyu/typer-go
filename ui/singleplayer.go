@@ -33,15 +33,12 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 	var inputWi *widgets.Input
 	inputWi = widgets.NewInput("singleplayer-input", true, false, w/5+1, h-h/6, w-w/5-1, h/6, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
-		if key == gocui.KeyEnter {
+		if key == gocui.KeyEnter || len(v.Buffer()) == 0 && key == gocui.KeyDelete {
 			return false
 		}
 		gocui.DefaultEditor.Edit(v, key, ch, mod)
 
-		var b string
-		if len(v.Buffer()) != 0 && key != gocui.KeyDelete {
-			b = v.Buffer()[:len(v.Buffer())-1]
-		}
+		b := v.Buffer()[:len(v.Buffer())-1]
 
 		ansiWord := wordsDiff(words[currWord], b)
 
