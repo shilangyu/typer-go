@@ -1,8 +1,10 @@
 package ui
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/jroimartin/gocui"
 	widgets "github.com/shilangyu/gocui-widgets"
@@ -11,19 +13,20 @@ import (
 // CreateSingleplayer creates welcome screen widgets
 func CreateSingleplayer(g *gocui.Gui) error {
 	var currWord int
+	var startTime *time.Time
 
 	w, h := g.Size()
 
 	statsFrameWi := widgets.NewCollection("singleplayer-stats", "STATS", false, 0, 0, w/5, h)
 
 	statWis := []*widgets.Text{
-		widgets.NewText("singleplayer-stats-wpm", "wpm: 0", false, false, 2, 1),
-		widgets.NewText("singleplayer-stats-time", "time: 0", false, false, 2, 2),
+		widgets.NewText("singleplayer-stats-wpm", "wpm: 0  ", false, false, 2, 1),
+		widgets.NewText("singleplayer-stats-time", "time: 0s  ", false, false, 2, 2),
 	}
 
 	textFrameWi := widgets.NewCollection("singleplayer-text", "", false, w/5+1, 0, 4*w/5, 5*h/6+1)
 
-	words := strings.Split("Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls Cock and balls", " ")
+	words := strings.Split("Basic chess rules are essential if you want to learn chess. That's why we are explaining these chess rules in an easy to understand way. From initial board set up to movement of every piece, we will explain everything in this chess rules section.", " ")
 	points := organiseText(words, 4*w/5-2)
 	var textWis []*widgets.Text
 	for i, p := range points {
@@ -36,6 +39,29 @@ func CreateSingleplayer(g *gocui.Gui) error {
 		if key == gocui.KeyEnter || len(v.Buffer()) == 0 && ch == 0 {
 			return false
 		}
+
+		if startTime == nil {
+			temp := time.Now()
+			startTime = &temp
+			go func() {
+				ticker := time.NewTicker(100 * time.Millisecond)
+				for {
+					<-ticker.C
+					g.Update(
+						statWis[1].ChangeText(
+							fmt.Sprintf("time: %.02fs", time.Since(*startTime).Seconds()),
+						),
+					)
+				}
+			}()
+		} else {
+			g.Update(
+				statWis[0].ChangeText(
+					fmt.Sprintf("wpm: %.0f", float64(currWord)/time.Since(*startTime).Minutes()),
+				),
+			)
+		}
+
 		gocui.DefaultEditor.Edit(v, key, ch, mod)
 
 		b := v.Buffer()[:len(v.Buffer())-1]
