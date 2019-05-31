@@ -47,19 +47,27 @@ func CreateSingleplayer(g *gocui.Gui) error {
 				ticker := time.NewTicker(100 * time.Millisecond)
 				for {
 					<-ticker.C
-					g.Update(
-						statWis[1].ChangeText(
-							fmt.Sprintf("time: %.02fs", time.Since(*startTime).Seconds()),
-						),
-					)
+					sinceStart := time.Since(*startTime)
+
+					g.Update(func(g *gocui.Gui) error {
+						err := statWis[1].ChangeText(
+							fmt.Sprintf("time: %.02fs", sinceStart.Seconds()),
+						)(g)
+						if err != nil {
+							return err
+						}
+
+						err = statWis[0].ChangeText(
+							fmt.Sprintf("wpm: %.0f", float64(currWord)/sinceStart.Minutes()),
+						)(g)
+						if err != nil {
+							return err
+						}
+
+						return nil
+					})
 				}
 			}()
-		} else {
-			g.Update(
-				statWis[0].ChangeText(
-					fmt.Sprintf("wpm: %.0f", float64(currWord)/time.Since(*startTime).Minutes()),
-				),
-			)
 		}
 
 		gocui.DefaultEditor.Edit(v, key, ch, mod)
