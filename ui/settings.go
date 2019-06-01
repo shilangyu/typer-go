@@ -13,6 +13,8 @@ func CreateSettings(g *gocui.Gui) error {
 
 	w, h := g.Size()
 	g.Mouse = true
+	g.Highlight = true
+	g.SelFgColor = gocui.ColorGreen
 
 	menuItems := []string{"highlight"}
 	menuWi := widgets.NewMenu("settings-menu", utils.Center(menuItems), true, true, w/4, h/2, currSetting(g), nil)
