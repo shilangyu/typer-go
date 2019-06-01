@@ -1,7 +1,6 @@
 package settings
 
 import (
-	"fmt"
 	"io/ioutil"
 	"path"
 	"runtime"
@@ -11,7 +10,7 @@ import (
 )
 
 type settings struct {
-	Test bool
+	Highlight Highlight
 }
 
 // I contains current settings properties from settings.yaml
@@ -24,10 +23,4 @@ func init() {
 	utils.Check(err)
 	err = yaml.Unmarshal(content, &I)
 	utils.Check(err)
-
-	fmt.Printf("%#v\n", I)
-}
-
-func H() {
-	fmt.Println("ssss")
 }
