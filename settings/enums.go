@@ -9,3 +9,7 @@ const (
 	// HighlightText says the text should have a text highlight
 	HighlightText
 )
+
+func (e Highlight) String() string {
+	return []string{"Background", "Text"}[e]
+}
