@@ -11,5 +11,5 @@ const (
 )
 
 func (e Highlight) String() string {
-	return []string{"Background", "Text"}[e]
+	return []string{"background", "text"}[e]
 }
