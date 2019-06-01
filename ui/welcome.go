@@ -13,6 +13,7 @@ import (
 func CreateWelcome(g *gocui.Gui) error {
 	w, h := g.Size()
 	g.Mouse = true
+	g.Cursor = false
 
 	signWi := widgets.NewText("welcome-sign", figure.NewFigure("typer-go", "", false).String(), false, true, w/2, h/5)
 
