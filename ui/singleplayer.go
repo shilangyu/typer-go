@@ -100,7 +100,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 	g.SetManager(wis...)
 
-	if err := keybindings(g); err != nil {
+	if err := keybindings(g, CreateWelcome); err != nil {
 		return err
 	}
 

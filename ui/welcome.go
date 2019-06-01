@@ -41,7 +41,7 @@ func CreateWelcome(g *gocui.Gui) error {
 
 	g.SetManager(signWi, menuWi, infoWi)
 
-	if err := keybindings(g); err != nil {
+	if err := keybindings(g, nil); err != nil {
 		return err
 	}
 
