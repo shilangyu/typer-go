@@ -8,6 +8,7 @@ import (
 
 	"github.com/jroimartin/gocui"
 	widgets "github.com/shilangyu/gocui-widgets"
+	"github.com/shilangyu/typer-go/settings"
 )
 
 // CreateSingleplayer creates welcome screen widgets
@@ -125,11 +126,19 @@ func organiseText(words []string, lineLength int) (points []struct{ x, y int }) 
 
 // adds ANSI colors to indicate diff
 func wordsDiff(toColor, differ string) (ansiWord string) {
+	var h string
+	switch settings.I.Highlight {
+	case settings.HighlightBackground:
+		h = "4"
+	case settings.HighlightText:
+		h = "3"
+	}
+
 	for i := range differ {
 		if i >= len(toColor) || differ[i] != toColor[i] {
-			ansiWord += "\u001b[41m"
+			ansiWord += "\u001b[" + h + "1m"
 		} else {
-			ansiWord += "\u001b[42m"
+			ansiWord += "\u001b[" + h + "2m"
 		}
 		ansiWord += string(differ[i])
 	}
