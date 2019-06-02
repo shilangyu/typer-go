@@ -12,6 +12,7 @@ import (
 	"github.com/jroimartin/gocui"
 	widgets "github.com/shilangyu/gocui-widgets"
 	"github.com/shilangyu/typer-go/settings"
+	"github.com/shilangyu/typer-go/stats"
 	"github.com/shilangyu/typer-go/utils"
 )
 
@@ -58,6 +59,9 @@ func CreateSingleplayer(g *gocui.Gui) error {
 				ticker := time.NewTicker(100 * time.Millisecond)
 				for {
 					<-ticker.C
+					if currWord == len(words) {
+						return
+					}
 					sinceStart := time.Since(*startTime)
 
 					g.Update(func(g *gocui.Gui) error {
@@ -91,6 +95,10 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 		if b == words[currWord] {
 			currWord++
+			if currWord == len(words) {
+				stats.AddHistory(float64(currWord) / time.Since(*startTime).Minutes())
+				stats.Save()
+			}
 			g.Update(inputWi.ChangeText(""))
 		}
 
