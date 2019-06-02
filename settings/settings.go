@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"runtime"
 
 	"github.com/shilangyu/typer-go/utils"
 	"gopkg.in/yaml.v2"
@@ -19,8 +18,7 @@ var I settings
 var settingsPath string
 
 func init() {
-	_, currFile, _, _ := runtime.Caller(0)
-	settingsPath = path.Join(currFile, "..", "..", "settings.yaml")
+	settingsPath = path.Join(utils.Root(), "settings.yaml")
 	content, err := ioutil.ReadFile(settingsPath)
 	utils.Check(err)
 	err = yaml.Unmarshal(content, &I)
