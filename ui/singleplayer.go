@@ -2,6 +2,9 @@ package ui
 
 import (
 	"fmt"
+	"io/ioutil"
+	"math/rand"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -9,6 +12,7 @@ import (
 	"github.com/jroimartin/gocui"
 	widgets "github.com/shilangyu/gocui-widgets"
 	"github.com/shilangyu/typer-go/settings"
+	"github.com/shilangyu/typer-go/utils"
 )
 
 // CreateSingleplayer creates welcome screen widgets
@@ -27,7 +31,11 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 	textFrameWi := widgets.NewCollection("singleplayer-text", "", false, w/5+1, 0, 4*w/5, 5*h/6+1)
 
-	words := strings.Split("Basic chess rules are essential if you want to learn chess. That's why we are explaining these chess rules in an easy to understand way. From initial board set up to movement of every piece, we will explain everything in this chess rules section.", " ")
+	text, err := chooseText()
+	if err != nil {
+		return err
+	}
+	words := strings.Split(text, " ")
 	points := organiseText(words, 4*w/5-2)
 	var textWis []*widgets.Text
 	for i, p := range points {
@@ -149,4 +157,17 @@ func wordsDiff(toColor, differ string) (ansiWord string) {
 	}
 
 	return
+}
+
+// chooseText randomly chooses a text from the dataset
+func chooseText() (string, error) {
+	bytes, err := ioutil.ReadFile(path.Join(utils.Root(), "texts.txt"))
+	if err != nil {
+		return "", nil
+	}
+	content := string(bytes)
+	texts := strings.Split(content, "\n")
+	texts = texts[:len(texts)-1]
+
+	return texts[rand.Intn(len(texts))], nil
 }
