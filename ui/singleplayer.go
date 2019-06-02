@@ -39,7 +39,9 @@ func CreateSingleplayer(g *gocui.Gui) error {
 	points := organiseText(words, 4*w/5-2)
 	var textWis []*widgets.Text
 	for i, p := range points {
-		words[i] += " "
+		if i != len(words)-1 {
+			words[i] += " "
+		}
 		textWis = append(textWis, widgets.NewText("singleplayer-text-"+strconv.Itoa(i), words[i], false, false, w/5+1+p.x, p.y))
 	}
 
@@ -87,7 +89,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 		g.Update(textWis[currWord].ChangeText(ansiWord))
 
-		if key == gocui.KeySpace && b == words[currWord] {
+		if b == words[currWord] {
 			currWord++
 			g.Update(inputWi.ChangeText(""))
 		}
