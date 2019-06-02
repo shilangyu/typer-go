@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"runtime"
 	"path"
+	"runtime"
 )
 
 // Root returns the root directory of the project
