@@ -29,6 +29,11 @@ func NewState(text string) *State {
 	}
 }
 
+// Wpm is the words per minute
+func (s State) Wpm() float64 {
+	return float64(s.CurrWord) / time.Since(s.StartTime).Minutes()
+}
+
 // PaintDiff returns an ANSII-painted string displaying the difference
 func (s *State) PaintDiff(differ string) (ansiWord string) {
 	var h string

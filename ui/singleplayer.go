@@ -53,18 +53,17 @@ func CreateSingleplayer(g *gocui.Gui) error {
 						ticker.Stop()
 						return
 					}
-					sinceStart := time.Since(state.StartTime)
 
 					g.Update(func(g *gocui.Gui) error {
 						err := statWis[1].ChangeText(
-							fmt.Sprintf("time: %.02fs", sinceStart.Seconds()),
+							fmt.Sprintf("time: %.02fs", time.Since(state.StartTime).Seconds()),
 						)(g)
 						if err != nil {
 							return err
 						}
 
 						err = statWis[0].ChangeText(
-							fmt.Sprintf("wpm: %.0f", float64(state.CurrWord)/sinceStart.Minutes()),
+							fmt.Sprintf("wpm: %.0f", state.Wpm()),
 						)(g)
 						if err != nil {
 							return err
@@ -87,7 +86,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 		if b == state.Words[state.CurrWord] {
 			state.CurrWord++
 			if state.CurrWord == len(state.Words) {
-				stats.AddHistory(float64(state.CurrWord) / time.Since(state.StartTime).Minutes())
+				stats.AddHistory(state.Wpm())
 				stats.Save()
 			}
 			g.Update(inputWi.ChangeText(""))
