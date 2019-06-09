@@ -3,7 +3,6 @@ package ui
 import (
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/jroimartin/gocui"
@@ -15,8 +14,7 @@ import (
 
 // CreateSingleplayer creates welcome screen widgets
 func CreateSingleplayer(g *gocui.Gui) error {
-	var currWord int
-	var startTime *time.Time
+	var state *game.State
 
 	w, h := g.Size()
 
@@ -33,14 +31,11 @@ func CreateSingleplayer(g *gocui.Gui) error {
 	if err != nil {
 		return err
 	}
-	words := strings.Split(text, " ")
-	points := organiseText(words, 4*w/5-2)
+	state = game.NewState(text)
+	points := organiseText(state.Words, 4*w/5-2)
 	var textWis []*widgets.Text
 	for i, p := range points {
-		if i != len(words)-1 {
-			words[i] += " "
-		}
-		textWis = append(textWis, widgets.NewText("singleplayer-text-"+strconv.Itoa(i), words[i], false, false, w/5+1+p.x, p.y))
+		textWis = append(textWis, widgets.NewText("singleplayer-text-"+strconv.Itoa(i), state.Words[i], false, false, w/5+1+p.x, p.y))
 	}
 
 	var inputWi *widgets.Input
@@ -49,17 +44,16 @@ func CreateSingleplayer(g *gocui.Gui) error {
 			return false
 		}
 
-		if startTime == nil {
-			temp := time.Now()
-			startTime = &temp
+		if state.StartTime.IsZero() {
+			state.StartTime = time.Now()
 			go func() {
 				ticker := time.NewTicker(100 * time.Millisecond)
 				for {
 					<-ticker.C
-					if currWord == len(words) {
+					if state.CurrWord == len(state.Words) {
 						return
 					}
-					sinceStart := time.Since(*startTime)
+					sinceStart := time.Since(state.StartTime)
 
 					g.Update(func(g *gocui.Gui) error {
 						err := statWis[1].ChangeText(
@@ -70,7 +64,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 						}
 
 						err = statWis[0].ChangeText(
-							fmt.Sprintf("wpm: %.0f", float64(currWord)/sinceStart.Minutes()),
+							fmt.Sprintf("wpm: %.0f", float64(state.CurrWord)/sinceStart.Minutes()),
 						)(g)
 						if err != nil {
 							return err
@@ -86,14 +80,14 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 		b := v.Buffer()[:len(v.Buffer())-1]
 
-		ansiWord := wordsDiff(words[currWord], b)
+		ansiWord := wordsDiff(state.Words[state.CurrWord], b)
 
-		g.Update(textWis[currWord].ChangeText(ansiWord))
+		g.Update(textWis[state.CurrWord].ChangeText(ansiWord))
 
-		if b == words[currWord] {
-			currWord++
-			if currWord == len(words) {
-				stats.AddHistory(float64(currWord) / time.Since(*startTime).Minutes())
+		if b == state.Words[state.CurrWord] {
+			state.CurrWord++
+			if state.CurrWord == len(state.Words) {
+				stats.AddHistory(float64(state.CurrWord) / time.Since(state.StartTime).Minutes())
 				stats.Save()
 			}
 			g.Update(inputWi.ChangeText(""))
