@@ -5,10 +5,17 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/shilangyu/typer-go/utils"
 )
+
+// wordStat describes the errors concerning a word
+type wordStat struct {
+	Duration   time.Duration `json:"duration"`
+	ErrorCount int           `json:"errorCount"`
+}
 
 type history struct {
 	Timestamp time.Time `json:"timestamp"`
@@ -16,7 +23,8 @@ type history struct {
 }
 
 type stats struct {
-	History []history `json:"history"`
+	History []history             `json:"history"`
+	Words   map[string][]wordStat `json:"words"`
 }
 
 // I contains current statistics
@@ -43,4 +51,12 @@ func Save() error {
 // AddHistory appends wpm with a timestamp to the history property
 func AddHistory(wpm float64) {
 	I.History = append(I.History, history{time.Now(), wpm})
+}
+
+// AddWord appends stats about a word
+func AddWord(rawWord string, time time.Duration, errorCount int) {
+	word := strings.TrimFunc(strings.ToLower(rawWord), func(ch rune) bool {
+		return ch == ' ' || ch == '.' || ch == ':' || ch == '?' || ch == '!'
+	})
+	I.Words[word] = append(I.Words[word], wordStat{time, errorCount})
 }
