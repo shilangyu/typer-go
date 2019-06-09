@@ -2,18 +2,15 @@ package ui
 
 import (
 	"fmt"
-	"io/ioutil"
-	"math/rand"
-	"path"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/jroimartin/gocui"
 	widgets "github.com/shilangyu/gocui-widgets"
+	"github.com/shilangyu/typer-go/game"
 	"github.com/shilangyu/typer-go/settings"
 	"github.com/shilangyu/typer-go/stats"
-	"github.com/shilangyu/typer-go/utils"
 )
 
 // CreateSingleplayer creates welcome screen widgets
@@ -32,7 +29,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 	textFrameWi := widgets.NewCollection("singleplayer-text", "", false, w/5+1, 0, 4*w/5, 5*h/6+1)
 
-	text, err := chooseText()
+	text, err := game.ChooseText()
 	if err != nil {
 		return err
 	}
@@ -167,17 +164,4 @@ func wordsDiff(toColor, differ string) (ansiWord string) {
 	}
 
 	return
-}
-
-// chooseText randomly chooses a text from the dataset
-func chooseText() (string, error) {
-	bytes, err := ioutil.ReadFile(path.Join(utils.Root(), "texts.txt"))
-	if err != nil {
-		return "", nil
-	}
-	content := string(bytes)
-	texts := strings.Split(content, "\n")
-	texts = texts[:len(texts)-1]
-
-	return texts[rand.Intn(len(texts))], nil
 }
