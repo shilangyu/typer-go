@@ -8,7 +8,6 @@ import (
 	"github.com/jroimartin/gocui"
 	widgets "github.com/shilangyu/gocui-widgets"
 	"github.com/shilangyu/typer-go/game"
-	"github.com/shilangyu/typer-go/settings"
 	"github.com/shilangyu/typer-go/stats"
 )
 
@@ -81,7 +80,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 		b := v.Buffer()[:len(v.Buffer())-1]
 
-		ansiWord := wordsDiff(state.Words[state.CurrWord], b)
+		ansiWord := state.PaintDiff(b)
 
 		g.Update(textWis[state.CurrWord].ChangeText(ansiWord))
 
@@ -129,33 +128,6 @@ func organiseText(words []string, lineLength int) (points []struct{ x, y int }) 
 		}
 		points = append(points, struct{ x, y int }{x, y})
 		x += len(word)
-	}
-
-	return
-}
-
-// adds ANSI colors to indicate diff
-func wordsDiff(toColor, differ string) (ansiWord string) {
-	var h string
-	switch settings.I.Highlight {
-	case settings.HighlightBackground:
-		h = "4"
-	case settings.HighlightText:
-		h = "3"
-	}
-
-	for i := range differ {
-		if i >= len(toColor) || differ[i] != toColor[i] {
-			ansiWord += "\u001b[" + h + "1m"
-		} else {
-			ansiWord += "\u001b[" + h + "2m"
-		}
-		ansiWord += string(differ[i])
-	}
-	ansiWord += "\u001b[0m"
-
-	if len(differ) < len(toColor) {
-		ansiWord += toColor[len(differ):]
 	}
 
 	return
