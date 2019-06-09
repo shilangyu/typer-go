@@ -44,7 +44,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 		}
 
 		if state.StartTime.IsZero() {
-			state.StartTime = time.Now()
+			state.Start()
 			go func() {
 				ticker := time.NewTicker(100 * time.Millisecond)
 				for {
@@ -84,7 +84,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 		g.Update(textWis[state.CurrWord].ChangeText(ansiWord))
 
 		if b == state.Words[state.CurrWord] {
-			state.CurrWord++
+			state.NextWord()
 			if state.CurrWord == len(state.Words) {
 				stats.AddHistory(state.Wpm())
 				stats.Save()

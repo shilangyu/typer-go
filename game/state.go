@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/shilangyu/typer-go/settings"
+	"github.com/shilangyu/typer-go/stats"
 )
 
 // State describes the state of a game
@@ -15,6 +16,9 @@ type State struct {
 	Words []string
 	// StartTime is a timestamp of the first keystroke
 	StartTime time.Time
+	// properties concerning current word
+	wordStart  time.Time
+	wordErrors int
 }
 
 // NewState initializes State
@@ -29,9 +33,24 @@ func NewState(text string) *State {
 	}
 }
 
+// Start starts the mechanism
+func (s *State) Start() {
+	s.StartTime = time.Now()
+	s.wordStart = s.StartTime
+}
+
 // Wpm is the words per minute
 func (s State) Wpm() float64 {
 	return float64(s.CurrWord) / time.Since(s.StartTime).Minutes()
+}
+
+// NextWord saves stats of the current word and increments the counter
+func (s *State) NextWord() {
+	stats.AddWord(s.Words[s.CurrWord], time.Since(s.wordStart), s.wordErrors)
+	s.CurrWord++
+
+	s.wordStart = time.Now()
+	s.wordErrors = 0
 }
 
 // PaintDiff returns an ANSII-painted string displaying the difference
