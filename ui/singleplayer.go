@@ -78,6 +78,10 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 		b := v.Buffer()[:len(v.Buffer())-1]
 
+		if ch != 0 && (len(b) > len(state.Words[state.CurrWord]) || rune(state.Words[state.CurrWord][len(b)-1]) != ch) {
+			state.IncError()
+		}
+
 		ansiWord := state.PaintDiff(b)
 
 		g.Update(textWis[state.CurrWord].ChangeText(ansiWord))

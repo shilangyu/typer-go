@@ -50,6 +50,11 @@ func (s State) Wpm() float64 {
 	return float64(s.CurrWord) / time.Since(s.StartTime).Minutes()
 }
 
+// IncError increments the error count
+func (s *State) IncError() {
+	s.wordErrors++
+}
+
 // NextWord saves stats of the current word and increments the counter
 func (s *State) NextWord() {
 	stats.AddWord(s.Words[s.CurrWord], time.Since(s.wordStart), s.wordErrors)
