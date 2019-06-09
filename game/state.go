@@ -39,6 +39,12 @@ func (s *State) Start() {
 	s.wordStart = s.StartTime
 }
 
+// End ends the mechanism
+func (s *State) End() {
+	stats.AddHistory(s.Wpm())
+	stats.Save()
+}
+
 // Wpm is the words per minute
 func (s State) Wpm() float64 {
 	return float64(s.CurrWord) / time.Since(s.StartTime).Minutes()

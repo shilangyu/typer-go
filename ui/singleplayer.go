@@ -8,7 +8,6 @@ import (
 	"github.com/jroimartin/gocui"
 	widgets "github.com/shilangyu/gocui-widgets"
 	"github.com/shilangyu/typer-go/game"
-	"github.com/shilangyu/typer-go/stats"
 )
 
 // CreateSingleplayer creates welcome screen widgets
@@ -86,8 +85,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 		if b == state.Words[state.CurrWord] {
 			state.NextWord()
 			if state.CurrWord == len(state.Words) {
-				stats.AddHistory(state.Wpm())
-				stats.Save()
+				state.End()
 			}
 			g.Update(inputWi.ChangeText(""))
 		}
