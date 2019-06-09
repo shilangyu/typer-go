@@ -128,7 +128,7 @@ func organiseText(words []string, lineLength int) (points []struct{ x, y int }) 
 			x = 0
 		}
 		points = append(points, struct{ x, y int }{x, y})
-		x += len(word) + 1
+		x += len(word)
 	}
 
 	return
