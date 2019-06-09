@@ -51,6 +51,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 				for {
 					<-ticker.C
 					if state.CurrWord == len(state.Words) {
+						ticker.Stop()
 						return
 					}
 					sinceStart := time.Since(state.StartTime)
