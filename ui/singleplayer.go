@@ -12,7 +12,11 @@ import (
 
 // CreateSingleplayer creates welcome screen widgets
 func CreateSingleplayer(g *gocui.Gui) error {
-	var state *game.State
+	text, err := game.ChooseText()
+	if err != nil {
+		return err
+	}
+	state := game.NewState(text)
 
 	w, h := g.Size()
 
@@ -25,11 +29,6 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 	textFrameWi := widgets.NewCollection("singleplayer-text", "", false, w/5+1, 0, 4*w/5, 5*h/6+1)
 
-	text, err := game.ChooseText()
-	if err != nil {
-		return err
-	}
-	state = game.NewState(text)
 	points := organiseText(state.Words, 4*w/5-2)
 	var textWis []*widgets.Text
 	for i, p := range points {
