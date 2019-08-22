@@ -113,7 +113,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 }
 
 // takes a slice of words and length of a line
-// retuns xs and ys of the words on a plane
+// returns xs and ys of the words on a plane
 func organiseText(words []string, lineLength int) (points []struct{ x, y int }) {
 	x, y := 0, 0
 
