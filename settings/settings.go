@@ -10,7 +10,8 @@ import (
 )
 
 type settings struct {
-	Highlight Highlight
+	Highlight    Highlight
+	ErrorDisplay ErrorDisplay
 }
 
 // I contains current settings properties from settings.yaml
