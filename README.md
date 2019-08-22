@@ -1,5 +1,7 @@
 # typer-go
 
+[![](https://goreportcard.com/badge/github.com/shilangyu/typer-go)](https://goreportcard.com/report/github.com/shilangyu/typer-go)
+
 Typer [TUI](https://en.wikipedia.org/wiki/Text-based_user_interface) game implemented in golang!
 
 ### usage

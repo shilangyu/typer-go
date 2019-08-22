@@ -5,10 +5,6 @@ import (
 )
 
 func keybindings(g *gocui.Gui, goBack func(g *gocui.Gui) error) error {
-	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
-		return err
-	}
-
 	if goBack != nil {
 		if err := g.SetKeybinding("", gocui.KeyCtrlQ, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
 			return goBack(g)
@@ -17,7 +13,7 @@ func keybindings(g *gocui.Gui, goBack func(g *gocui.Gui) error) error {
 		}
 	}
 
-	return nil
+	return g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit)
 }
 
 func quit(g *gocui.Gui, v *gocui.View) error {

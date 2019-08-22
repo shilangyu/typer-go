@@ -109,11 +109,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 	g.SetManager(wis...)
 
-	if err := keybindings(g, CreateWelcome); err != nil {
-		return err
-	}
-
-	return nil
+	return keybindings(g, CreateWelcome)
 }
 
 // takes a slice of words and length of a line
