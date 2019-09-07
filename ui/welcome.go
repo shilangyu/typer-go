@@ -28,7 +28,7 @@ func CreateWelcome(g *gocui.Gui) error {
 	infoWi := widgets.NewText("welcome-menu-info", infoItems[0], true, true, w/2, 3*h/4)
 
 	menuItems := utils.Center([]string{"single player", "multi player", "stats", "settings", "exit"})
-	menuWi := widgets.NewMenu("welcome-main-menu", menuItems, true, true, w/2, h/2, func(i int) {
+	menuWi := widgets.NewMenu("welcome-main-menu", menuItems, true, w/2, h/2, func(i int) {
 		g.Update(infoWi.ChangeText(infoItems[i]))
 	}, func(i int) {
 		switch i {
@@ -43,6 +43,11 @@ func CreateWelcome(g *gocui.Gui) error {
 	})
 
 	g.SetManager(signWi, menuWi, infoWi)
+
+	g.Update(func(*gocui.Gui) error {
+		g.SetCurrentView("welcome-main-menu")
+		return nil
+	})
 
 	return keybindings(g, nil)
 }

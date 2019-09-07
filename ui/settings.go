@@ -23,7 +23,7 @@ func CreateSettings(g *gocui.Gui) error {
 	infoWi := widgets.NewText("settings-menu-info", infoItems[0], true, true, w/2, 3*h/4)
 
 	menuItems := utils.Center([]string{"highlight", "error display"})
-	menuWi := widgets.NewMenu("settings-menu", menuItems, true, true, w/4, h/2, func(i int) {
+	menuWi := widgets.NewMenu("settings-menu", menuItems, true, w/4, h/2, func(i int) {
 		g.Update(infoWi.ChangeText(infoItems[i]))
 		currSetting(g)(i)
 	}, nil)
@@ -77,7 +77,7 @@ func currSetting(g *gocui.Gui) func(i int) {
 			selected = int(settings.I.ErrorDisplay)
 		}
 
-		sideMenuWi := widgets.NewMenu("settings-sidemenu", utils.Center(menuItems), true, true, 3*w/4, h/2, func(i int) {
+		sideMenuWi := widgets.NewMenu("settings-sidemenu", utils.Center(menuItems), true, 3*w/4, h/2, func(i int) {
 			settingsChange(i)
 			settings.Save()
 		}, nil)

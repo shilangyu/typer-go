@@ -108,6 +108,11 @@ func CreateSingleplayer(g *gocui.Gui) error {
 
 	g.SetManager(wis...)
 
+	g.Update(func(*gocui.Gui) error {
+		g.SetCurrentView("singleplayer-input")
+		return nil
+	})
+
 	return keybindings(g, CreateWelcome)
 }
 
