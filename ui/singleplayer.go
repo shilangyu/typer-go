@@ -88,6 +88,26 @@ func CreateSingleplayer(g *gocui.Gui) error {
 			state.NextWord()
 			if state.CurrWord == len(state.Words) {
 				state.End()
+
+				var popupWi *widgets.Modal
+				popupWi = widgets.NewModal("singleplayer-popup", "The end of the end\n is the end of times who craes", []string{"play", "quit"}, true, w/2, h/2, func(i int) {
+					popupWi.Layout(g)
+				}, func(i int) {
+					switch i {
+					case 0:
+						CreateSingleplayer(g)
+					case 1:
+						CreateWelcome(g)
+					}
+				})
+				g.Update(func(g *gocui.Gui) error {
+					popupWi.Layout(g)
+					popupWi.Layout(g)
+					g.SetCurrentView("singleplayer-popup")
+					g.SetViewOnTop("singleplayer-popup")
+					return nil
+				})
+
 			}
 			g.Update(inputWi.ChangeText(""))
 		}
