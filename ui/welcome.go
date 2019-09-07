@@ -20,26 +20,25 @@ func CreateWelcome(g *gocui.Gui) error {
 
 	infoItems := utils.Center([]string{
 		"Single player mode - test your typing skills offline!",
-		"Multi player mode - battle against other typers",
+		"TO BE RELEASED", //"Multi player mode - battle against other typers",
+		"Stats - View your statistics",
 		"Settings - change app settings",
 		"Exit - exit the app",
 	})
 	infoWi := widgets.NewText("welcome-menu-info", infoItems[0], true, true, w/2, 3*h/4)
 
-	menuItems := utils.Center([]string{"single player", "multi player", "settings", "exit"})
+	menuItems := utils.Center([]string{"single player", "multi player", "stats", "settings", "exit"})
 	menuWi := widgets.NewMenu("welcome-main-menu", menuItems, true, true, w/2, h/2, func(i int) {
 		g.Update(infoWi.ChangeText(infoItems[i]))
 	}, func(i int) {
 		switch i {
 		case 0:
 			CreateSingleplayer(g)
-		case 2:
-			CreateSettings(g)
 		case 3:
+			CreateSettings(g)
+		case 4:
 			g.Close()
 			os.Exit(0)
-		default:
-
 		}
 	})
 
