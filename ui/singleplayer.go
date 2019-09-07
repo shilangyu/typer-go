@@ -45,8 +45,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 			state.Start()
 			go func() {
 				ticker := time.NewTicker(100 * time.Millisecond)
-				for {
-					<-ticker.C
+				for range ticker.C {
 					if state.CurrWord == len(state.Words) {
 						ticker.Stop()
 						return
