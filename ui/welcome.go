@@ -20,8 +20,8 @@ func CreateWelcome(g *gocui.Gui) error {
 
 	infoItems := utils.Center([]string{
 		"Single player mode - test your typing skills offline!",
-		"TO BE RELEASED", //"Multi player mode - battle against other typers",
-		"Stats - View your statistics",
+		"Multi player mode - battle against other typers",
+		"TO BE RELEASED", //"Stats - View your statistics",
 		"Settings - change app settings",
 		"Exit - exit the app",
 	})
@@ -34,6 +34,8 @@ func CreateWelcome(g *gocui.Gui) error {
 		switch i {
 		case 0:
 			CreateSingleplayer(g)
+		case 1:
+			CreateMultiplayer(g)
 		case 3:
 			CreateSettings(g)
 		case 4:
