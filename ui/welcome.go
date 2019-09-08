@@ -35,7 +35,7 @@ func CreateWelcome(g *gocui.Gui) error {
 		case 0:
 			CreateSingleplayer(g)
 		case 1:
-			CreateMultiplayer(g)
+			CreateMultiplayerSetup(g)
 		case 3:
 			CreateSettings(g)
 		case 4:

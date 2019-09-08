@@ -12,7 +12,27 @@ import (
 	"github.com/jroimartin/gocui"
 	widgets "github.com/shilangyu/gocui-widgets"
 	"github.com/shilangyu/typer-go/game"
+	"github.com/shilangyu/typer-go/utils"
 )
+
+// CreateMultiplayerSetup creates multiplayer room creation
+func CreateMultiplayerSetup(g *gocui.Gui) error {
+	w, h := g.Size()
+
+	menuItems := utils.Center([]string{"server", "client"})
+	menuWi := widgets.NewMenu("mp-setup-menu-role", menuItems, true, w/4, h/2, func(i int) {
+
+	}, nil)
+
+	g.SetManager(menuWi)
+
+	g.Update(func(*gocui.Gui) error {
+		g.SetCurrentView("mp-setup-menu-role")
+		return nil
+	})
+
+	return keybindings(g, CreateWelcome)
+}
 
 // CreateMultiplayer creates multiplayer screen widgets
 func CreateMultiplayer(g *gocui.Gui) error {
@@ -137,5 +157,5 @@ func CreateMultiplayer(g *gocui.Gui) error {
 		return nil
 	})
 
-	return keybindings(g, CreateWelcome)
+	return keybindings(g, CreateMultiplayerSetup)
 }
