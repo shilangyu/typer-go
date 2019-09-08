@@ -10,7 +10,7 @@ import (
 	"github.com/shilangyu/typer-go/game"
 )
 
-// CreateSingleplayer creates welcome screen widgets
+// CreateSingleplayer creates singleplayer screen widgets
 func CreateSingleplayer(g *gocui.Gui) error {
 	text, err := game.ChooseText()
 	if err != nil {
