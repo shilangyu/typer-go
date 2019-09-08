@@ -19,12 +19,40 @@ import (
 func CreateMultiplayerSetup(g *gocui.Gui) error {
 	w, h := g.Size()
 
+	loadingChars := []string{
+		"⡿",
+		"⣟",
+		"⣯",
+		"⣷",
+		"⣾",
+		"⣽",
+		"⣻",
+		"⢿",
+	}
+	var loadingProgress int
+
+	infoItems := utils.Center([]string{"Be the host a type race - let your friends know your ip", "Join a room - enter the ip of the host"})
+	infoWi := widgets.NewText("mp-setup-menu-info", infoItems[0], true, true, w/2, 3*h/4)
+
+	setupWi := widgets.NewCollection("mp-setup-create", "", true, 3*w/4, h/2, w/4, 3)
+
+	insidesWi := widgets.NewText("mp-setup-insides", strings.Repeat(" ", w/4-3), false, true, 3*w/4+1, h/2)
+
 	menuItems := utils.Center([]string{"server", "client"})
 	menuWi := widgets.NewMenu("mp-setup-menu-role", menuItems, true, w/4, h/2, func(i int) {
-
+		g.Update(infoWi.ChangeText(infoItems[i]))
 	}, nil)
 
-	g.SetManager(menuWi)
+	g.SetManager(infoWi, menuWi, setupWi)
+
+	go func() {
+		g.Update(insidesWi.Layout)
+		ticker := time.NewTicker(100 * time.Millisecond)
+		for range ticker.C {
+			g.Update(insidesWi.ChangeText(fmt.Sprintf("%s Loading", loadingChars[loadingProgress%len(loadingChars)])))
+			loadingProgress++
+		}
+	}()
 
 	g.Update(func(*gocui.Gui) error {
 		g.SetCurrentView("mp-setup-menu-role")
@@ -158,4 +186,47 @@ func CreateMultiplayer(g *gocui.Gui) error {
 	})
 
 	return keybindings(g, CreateMultiplayerSetup)
+}
+
+func createServer() (*net.Listener, error) {
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err != nil {
+		return nil, err
+	}
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+	ip := localAddr.IP
+	conn.Close()
+
+	listener, err := net.Listen("tcp", ip.String()+":9001")
+	if err != nil {
+		return nil, err
+	}
+
+	for {
+		// Listen for an incoming connection.
+		conn, err := listener.Accept()
+		if err != nil {
+			fmt.Println("Error accepting: ", err.Error())
+			os.Exit(1)
+		}
+		fmt.Println("someone connected")
+		// Handle connections in a new goroutine.
+		go func(conn net.Conn) {
+			reader := bufio.NewReader(conn)
+
+			for {
+				message, err := reader.ReadString('\n')
+				if err != nil {
+					fmt.Println("someone disconnected")
+					conn.Close()
+					return
+				}
+
+				fmt.Print("|" + strings.TrimSpace(message) + "|")
+				// Send a response back to person contacting us.
+				conn.Write([]byte("STOP\n"))
+			}
+		}(conn)
+	}
+
 }
