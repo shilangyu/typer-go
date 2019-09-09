@@ -15,6 +15,12 @@ import (
 	"github.com/shilangyu/typer-go/utils"
 )
 
+const tcpPort = "9001"
+
+var isHost bool
+var server net.Listener
+var conn net.Conn
+
 // CreateMultiplayerSetup creates multiplayer room creation
 func CreateMultiplayerSetup(g *gocui.Gui) error {
 	w, h := g.Size()
@@ -39,20 +45,40 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 	insidesWi := widgets.NewText("mp-setup-insides", strings.Repeat(" ", w/4-3), false, true, 3*w/4+1, h/2)
 
 	menuItems := utils.Center([]string{"server", "client"})
-	menuWi := widgets.NewMenu("mp-setup-menu-role", menuItems, true, w/4, h/2, func(i int) {
+	menuWi := widgets.NewMenu("mp-setup-menu", menuItems, true, w/4, h/2, func(i int) {
 		g.Update(infoWi.ChangeText(infoItems[i]))
-	}, nil)
+	}, func(i int) {
+		g.DeleteKeybindings("mp-setup-menu")
 
-	g.SetManager(infoWi, menuWi, setupWi)
+		switch i {
+		case 0:
+			isHost = true
 
-	go func() {
-		g.Update(insidesWi.Layout)
-		ticker := time.NewTicker(100 * time.Millisecond)
-		for range ticker.C {
-			g.Update(insidesWi.ChangeText(fmt.Sprintf("%s Loading", loadingChars[loadingProgress%len(loadingChars)])))
-			loadingProgress++
+			loadingTicker := time.NewTicker(100 * time.Millisecond)
+			insidesWi.Layout(g)
+
+			go func() {
+				for range loadingTicker.C {
+					g.Update(insidesWi.ChangeText(fmt.Sprintf("%s Creating a room", loadingChars[loadingProgress%len(loadingChars)])))
+					loadingProgress++
+				}
+			}()
+
+			conn, _ := net.Dial("udp", "8.8.8.8:80")
+			localAddr := conn.LocalAddr().(*net.UDPAddr)
+			myIP := localAddr.IP.String()
+			conn.Close()
+
+			server, _ = net.Listen("tcp", myIP+":"+tcpPort)
+
+			loadingTicker.Stop()
+			g.Update(insidesWi.ChangeText(fmt.Sprintf("Room created at %s", myIP)))
+
+		case 1:
+			isHost = false
+
 		}
-	}()
+	})
 
 	g.SetManager(infoWi, menuWi, setupWi)
 	g.Update(func(*gocui.Gui) error {
