@@ -25,18 +25,6 @@ var conn net.Conn
 func CreateMultiplayerSetup(g *gocui.Gui) error {
 	w, h := g.Size()
 
-	loadingChars := []string{
-		"⡿",
-		"⣟",
-		"⣯",
-		"⣷",
-		"⣾",
-		"⣽",
-		"⣻",
-		"⢿",
-	}
-	var loadingProgress int
-
 	infoItems := utils.Center([]string{"Be the host a type race - let your friends know your ip", "Join a room - enter the ip of the host"})
 	infoWi := widgets.NewText("mp-setup-menu-info", infoItems[0], true, true, w/2, 3*h/4)
 
@@ -54,15 +42,9 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 		case 0:
 			isHost = true
 
-			loadingTicker := time.NewTicker(100 * time.Millisecond)
 			insidesWi.Layout(g)
 
-			go func() {
-				for range loadingTicker.C {
-					g.Update(insidesWi.ChangeText(fmt.Sprintf("%s Creating a room", loadingChars[loadingProgress%len(loadingChars)])))
-					loadingProgress++
-				}
-			}()
+			g.Update(insidesWi.ChangeText("Creating a room..."))
 
 			conn, _ := net.Dial("udp", "8.8.8.8:80")
 			localAddr := conn.LocalAddr().(*net.UDPAddr)
@@ -71,7 +53,6 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 
 			server, _ = net.Listen("tcp", myIP+":"+tcpPort)
 
-			loadingTicker.Stop()
 			g.Update(insidesWi.ChangeText(fmt.Sprintf("Room created at %s", myIP)))
 
 		case 1:
