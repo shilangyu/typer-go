@@ -14,7 +14,8 @@ func CreateWelcome(g *gocui.Gui) error {
 	w, h := g.Size()
 	g.Mouse = true
 	g.Cursor = false
-	g.Highlight = false
+	g.Highlight = true
+	g.SelFgColor = gocui.ColorGreen
 
 	signWi := widgets.NewText("welcome-sign", figure.NewFigure("typer-go", "", false).String(), false, true, w/2, h/5)
 

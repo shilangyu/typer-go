@@ -12,9 +12,6 @@ func CreateSettings(g *gocui.Gui) error {
 	var focusedView int
 
 	w, h := g.Size()
-	g.Mouse = true
-	g.Highlight = true
-	g.SelFgColor = gocui.ColorGreen
 
 	infoItems := utils.Center([]string{
 		"How your text should be highlighted",
