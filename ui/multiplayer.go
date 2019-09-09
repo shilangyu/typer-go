@@ -54,8 +54,10 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 		}
 	}()
 
+	g.SetManager(infoWi, menuWi, setupWi)
 	g.Update(func(*gocui.Gui) error {
-		g.SetCurrentView("mp-setup-menu-role")
+		g.SetCurrentView("mp-setup-menu")
+		menuWi.Layout(g)
 		return nil
 	})
 
