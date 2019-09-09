@@ -27,9 +27,9 @@ func CreateSettings(g *gocui.Gui) error {
 		g.Update(infoWi.ChangeText(infoItems[i]))
 		currSetting(g)(i)
 	}, nil)
-	currSetting(g)(0)
 
 	g.SetManager(menuWi, infoWi)
+	currSetting(g)(0)
 
 	if err := keybindings(g, CreateWelcome); err != nil {
 		return err
@@ -82,9 +82,9 @@ func currSetting(g *gocui.Gui) func(i int) {
 			settings.Save()
 		}, nil)
 		g.Update(func(g *gocui.Gui) error {
+			g.SetCurrentView("settings-menu")
 			sideMenuWi.Layout(g)
 			sideMenuWi.ChangeSelected(selected)(g)
-			g.SetCurrentView("settings-menu")
 			return nil
 		})
 	}
