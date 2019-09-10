@@ -7,7 +7,7 @@ Typer [TUI](https://en.wikipedia.org/wiki/Text-based_user_interface) game implem
 
 ### usage
 
-To build from source (needs [golang](https://golang.org/dl/) installed (v1.12+)):
+To build from source (needs [golang](https://golang.org/dl/) installed (v1.13+)):
 
 ```sh
 go get github.com/shilangyu/typer-go
