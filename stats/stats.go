@@ -28,7 +28,12 @@ type stats struct {
 }
 
 // I contains current statistics
-var I stats
+// its initialized because json.Marshal sees the properties
+// as null pointers not empty objects as it should
+var I = stats{
+	History: []history{},
+	Words:   map[string][]wordStat{},
+}
 var statsPath string
 
 func init() {
