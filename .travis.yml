@@ -1,0 +1,18 @@
+os:
+  - windows
+
+language: go
+go:
+  - "1.11"
+  - master
+
+script:
+  - go build
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: typer-go.exe
+  skip_cleanup: true
+  on:
+    tags: true
