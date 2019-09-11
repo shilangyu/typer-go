@@ -6,7 +6,6 @@ import (
 	"math/rand"
 	"os"
 	"path"
-
 	"strings"
 
 	"github.com/shilangyu/typer-go/settings"
