@@ -34,11 +34,11 @@ func CreateWelcome(g *gocui.Gui) error {
 	}, func(i int) {
 		switch i {
 		case 0:
-			CreateSingleplayer(g)
+			utils.Check(CreateSingleplayer(g))
 		case 1:
-			CreateMultiplayerSetup(g)
+			utils.Check(CreateMultiplayerSetup(g))
 		case 3:
-			CreateSettings(g)
+			utils.Check(CreateSettings(g))
 		case 4:
 			g.Close()
 			os.Exit(0)
