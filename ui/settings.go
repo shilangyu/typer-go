@@ -27,7 +27,7 @@ func CreateSettings(g *gocui.Gui) error {
 	}, nil)
 
 	g.SetManager(menuWi, infoWi)
-	currSetting(g)(0)
+	defer currSetting(g)(0)
 
 	if err := keybindings(g, CreateWelcome); err != nil {
 		return err
