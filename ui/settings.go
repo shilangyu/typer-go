@@ -20,7 +20,7 @@ func CreateSettings(g *gocui.Gui) error {
 	})
 	infoWi := widgets.NewText("settings-menu-info", infoItems[0], true, true, w/2, 3*h/4)
 
-	menuItems := utils.Center([]string{"highlight", "error display", "Texts path"})
+	menuItems := utils.Center([]string{"highlight", "error display", "texts path"})
 	menuWi := widgets.NewMenu("settings-menu", menuItems, true, w/4, h/2, func(i int) {
 		g.Update(infoWi.ChangeText(infoItems[i]))
 		currSetting(g)(i)
