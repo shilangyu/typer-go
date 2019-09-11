@@ -79,6 +79,22 @@ func currSetting(g *gocui.Gui) func(i int) {
 			changes = func(g *gocui.Gui) { tempSideWi.ChangeSelected(int(settings.I.ErrorDisplay))(g) }
 
 			sideWi = tempSideWi
+		case 2:
+			tempSideWi := widgets.NewInput("settings-side", true, true, x, y, w/4, 3, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
+				if key == gocui.KeyEnter || len(v.Buffer()) == 0 && ch == 0 {
+					return false
+				}
+
+				gocui.DefaultEditor.Edit(v, key, ch, mod)
+
+				settings.I.TextsPath = v.Buffer()[:len(v.Buffer())-1]
+				settings.Save()
+
+				return false
+			})
+			changes = func(g *gocui.Gui) { tempSideWi.ChangeText(settings.I.TextsPath)(g) }
+
+			sideWi = tempSideWi
 		}
 
 		g.Update(func(g *gocui.Gui) error {
