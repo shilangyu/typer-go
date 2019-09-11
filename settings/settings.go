@@ -12,6 +12,7 @@ import (
 type settings struct {
 	Highlight    Highlight
 	ErrorDisplay ErrorDisplay
+	TextsPath    string
 }
 
 // I contains current settings properties from settings.yaml
