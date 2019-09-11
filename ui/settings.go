@@ -16,10 +16,11 @@ func CreateSettings(g *gocui.Gui) error {
 	infoItems := utils.Center([]string{
 		"How your text should be highlighted",
 		"What part should be displayed when you type an error",
+		"Path to your typer texts (seperated with a new line)",
 	})
 	infoWi := widgets.NewText("settings-menu-info", infoItems[0], true, true, w/2, 3*h/4)
 
-	menuItems := utils.Center([]string{"highlight", "error display"})
+	menuItems := utils.Center([]string{"highlight", "error display", "Texts path"})
 	menuWi := widgets.NewMenu("settings-menu", menuItems, true, w/4, h/2, func(i int) {
 		g.Update(infoWi.ChangeText(infoItems[i]))
 		currSetting(g)(i)
@@ -33,7 +34,7 @@ func CreateSettings(g *gocui.Gui) error {
 	}
 	if err := g.SetKeybinding("", gocui.KeyTab, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
 		focusedView++
-		_, err := g.SetCurrentView("settings-" + []string{"menu", "sidemenu"}[focusedView%2])
+		_, err := g.SetCurrentView("settings-" + []string{"menu", "side"}[focusedView%2])
 		return err
 	}); err != nil {
 		return err
@@ -46,42 +47,44 @@ func currSetting(g *gocui.Gui) func(i int) {
 	return func(i int) {
 		w, h := g.Size()
 
-		g.DeleteView("settings-sidemenu")
-		g.DeleteKeybindings("settings-sidemenu")
+		g.DeleteKeybindings("settings-side")
+		g.DeleteView("settings-side")
 
-		var menuItems []string
-		var settingsChange func(i int)
-		var selected int
+		x, y := 3*w/4, h/2
+		var sideWi gocui.Manager
+		changes := func(g *gocui.Gui) {}
 
 		switch i {
 		case 0:
-			menuItems = []string{
+			menuItems := utils.Center([]string{
 				settings.HighlightBackground.String(),
 				settings.HighlightText.String(),
-			}
-			settingsChange = func(i int) {
+			})
+			tempSideWi := widgets.NewMenu("settings-side", menuItems, true, x, y, func(i int) {
 				settings.I.Highlight = settings.Highlight(i)
-			}
-			selected = int(settings.I.Highlight)
+				settings.Save()
+			}, nil)
+			changes = func(g *gocui.Gui) { tempSideWi.ChangeSelected(int(settings.I.Highlight))(g) }
+
+			sideWi = tempSideWi
 		case 1:
-			menuItems = []string{
+			menuItems := utils.Center([]string{
 				settings.ErrorDisplayTyped.String(),
 				settings.ErrorDisplayText.String(),
-			}
-			settingsChange = func(i int) {
+			})
+			tempSideWi := widgets.NewMenu("settings-side", menuItems, true, x, y, func(i int) {
 				settings.I.ErrorDisplay = settings.ErrorDisplay(i)
-			}
-			selected = int(settings.I.ErrorDisplay)
+				settings.Save()
+			}, nil)
+			changes = func(g *gocui.Gui) { tempSideWi.ChangeSelected(int(settings.I.ErrorDisplay))(g) }
+
+			sideWi = tempSideWi
 		}
 
-		sideMenuWi := widgets.NewMenu("settings-sidemenu", utils.Center(menuItems), true, 3*w/4, h/2, func(i int) {
-			settingsChange(i)
-			settings.Save()
-		}, nil)
 		g.Update(func(g *gocui.Gui) error {
 			g.SetCurrentView("settings-menu")
-			sideMenuWi.Layout(g)
-			sideMenuWi.ChangeSelected(selected)(g)
+			sideWi.Layout(g)
+			changes(g)
 			return nil
 		})
 	}
