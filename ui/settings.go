@@ -16,7 +16,7 @@ func CreateSettings(g *gocui.Gui) error {
 	infoItems := utils.Center([]string{
 		"How your text should be highlighted",
 		"What part should be displayed when you type an error",
-		"Path to your typer texts (seperated with a new line)",
+		"Path to your typer texts (separated with a new line)",
 	})
 	infoWi := widgets.NewText("settings-menu-info", infoItems[0], true, true, w/2, 3*h/4)
 
