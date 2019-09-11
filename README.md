@@ -5,7 +5,7 @@
 
 Typer [TUI](https://en.wikipedia.org/wiki/Text-based_user_interface) game implemented in golang!
 
-### usage
+### install
 
 To build from source (needs [golang](https://golang.org/dl/) installed (v1.13+)):
 
@@ -15,7 +15,11 @@ go get github.com/shilangyu/typer-go
 
 or get an executable from the [release tab](https://github.com/shilangyu/typer-go/releases) and put into PATH
 
-Now just run `typer-go` in your terminal and the TUI will start. Full screen terminal is recommended.
+### usage
+
+Just run `typer-go` in your terminal and the TUI will start. Full screen terminal is recommended. There are no CLI commands and flags.
+
+You should first head to the settings and set a path to texts.
 
 ### navigation
 
