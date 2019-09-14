@@ -34,8 +34,6 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 	menuWi := widgets.NewMenu("mp-setup-menu", menuItems, true, w/4, h/2, func(i int) {
 		g.Update(infoWi.ChangeText(infoItems[i]))
 	}, func(i int) {
-		g.DeleteKeybindings("mp-setup-menu")
-
 		switch i {
 		case 0:
 			isHost = true
@@ -51,11 +49,17 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 			myIP := localAddr.IP.String()
 			conn.Close()
 
-			tempServer, err := net.Listen("tcp", myIP+"111:"+tcpPort)
+			tempServer, err := net.Listen("tcp", myIP+":"+tcpPort)
 
 			if err != nil {
-				g.Update(errorWi.ChangeText("\u001b[31mCould not create a server. Make sure the port 9001 is free."))
+				g.Update(func(g *gocui.Gui) error {
+					errorWi.ChangeText("\u001b[31mCould not create a server. Make sure the port 9001 is free.")(g)
+					g.SetCurrentView("mp-setup-menu")
+					return g.DeleteView("mp-setup-create")
+				})
 			} else {
+				g.DeleteKeybindings("mp-setup-menu")
+
 				server = tempServer
 				g.Update(createWi.ChangeText(fmt.Sprintf("Room created at %s", myIP)))
 				time.AfterFunc(2*time.Second, func() { CreateMultiplayer(g) })
