@@ -28,10 +28,6 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 	infoItems := utils.Center([]string{"Be the host a type race - let your friends know your ip", "Join a room - enter the ip of the host"})
 	infoWi := widgets.NewText("mp-setup-menu-info", infoItems[0], true, true, w/2, 3*h/4)
 
-	setupWi := widgets.NewCollection("mp-setup-create", "", true, 3*w/4, h/2, w/4, 3)
-
-	insidesWi := widgets.NewText("mp-setup-insides", strings.Repeat(" ", w/4-3), false, true, 3*w/4+1, h/2)
-
 	menuItems := utils.Center([]string{"server", "client"})
 	menuWi := widgets.NewMenu("mp-setup-menu", menuItems, true, w/4, h/2, func(i int) {
 		g.Update(infoWi.ChangeText(infoItems[i]))
@@ -42,9 +38,11 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 		case 0:
 			isHost = true
 
-			insidesWi.Layout(g)
+			createWi := widgets.NewText("mp-setup-create", strings.Repeat(" ", w/4-3), true, true, 3*w/4+1, h/2)
+			createWi.Layout(g)
+			g.SetCurrentView("mp-setup-create")
 
-			g.Update(insidesWi.ChangeText("Creating a room..."))
+			g.Update(createWi.ChangeText("Creating a room..."))
 
 			conn, _ := net.Dial("udp", "8.8.8.8:80")
 			localAddr := conn.LocalAddr().(*net.UDPAddr)
@@ -53,15 +51,25 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 
 			server, _ = net.Listen("tcp", myIP+":"+tcpPort)
 
-			g.Update(insidesWi.ChangeText(fmt.Sprintf("Room created at %s", myIP)))
+			g.Update(createWi.ChangeText(fmt.Sprintf("Room created at %s", myIP)))
 
 		case 1:
 			isHost = false
 
+			ipInputWi := widgets.NewInput("mp-setup-join", true, true, 3*w/4, h/2, w/4, 3, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
+				if key == gocui.KeyEnter {
+					// IP := v.Buffer()[:len(v.Buffer())-1]
+					return false
+				}
+				return !(len(v.Buffer()) == 0 && ch == 0)
+			})
+			ipInputWi.Layout(g)
+			g.SetCurrentView("mp-setup-join")
+
 		}
 	})
 
-	g.SetManager(infoWi, menuWi, setupWi)
+	g.SetManager(infoWi, menuWi)
 	g.Update(func(*gocui.Gui) error {
 		g.SetCurrentView("mp-setup-menu")
 		menuWi.Layout(g)
