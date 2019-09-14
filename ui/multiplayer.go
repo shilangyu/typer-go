@@ -71,8 +71,17 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 			ipInputWi := widgets.NewInput("mp-setup-join", true, true, 3*w/4, h/2, w/4, 3, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
 				if key == gocui.KeyEnter {
 					IP := v.Buffer()[:len(v.Buffer())-1]
-					conn, _ = net.Dial("tcp", IP+":"+tcpPort)
-					CreateMultiplayer(g)
+					tempConn, err := net.Dial("tcp", IP+":"+tcpPort)
+					if err != nil {
+						g.Update(func(g *gocui.Gui) error {
+							errorWi.ChangeText("\u001b[31mCould not join the room. Please check your/servers firewall.")(g)
+							g.SetCurrentView("mp-setup-menu")
+							return g.DeleteView("mp-setup-join")
+						})
+					} else {
+						conn = tempConn
+						CreateMultiplayer(g)
+					}
 					return false
 				}
 				return !(len(v.Buffer()) == 0 && ch == 0)
