@@ -57,7 +57,8 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 				g.Update(errorWi.ChangeText("\u001b[31mCould not create a server. Make sure the port 9001 is free."))
 			} else {
 				server = tempServer
-			g.Update(createWi.ChangeText(fmt.Sprintf("Room created at %s", myIP)))
+				g.Update(createWi.ChangeText(fmt.Sprintf("Room created at %s", myIP)))
+				time.AfterFunc(2*time.Second, func() { CreateMultiplayer(g) })
 			}
 
 		case 1:
@@ -67,6 +68,7 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 				if key == gocui.KeyEnter {
 					IP := v.Buffer()[:len(v.Buffer())-1]
 					conn, _ = net.Dial("tcp", IP+":"+tcpPort)
+					CreateMultiplayer(g)
 					return false
 				}
 				return !(len(v.Buffer()) == 0 && ch == 0)
