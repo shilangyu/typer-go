@@ -25,6 +25,8 @@ var conn net.Conn
 func CreateMultiplayerSetup(g *gocui.Gui) error {
 	w, h := g.Size()
 
+	errorWi := widgets.NewText("mp-setup-error", strings.Repeat(" ", 59), false, true, w/2, h/4)
+
 	infoItems := utils.Center([]string{"Be the host a type race - let your friends know your ip", "Join a room - enter the ip of the host"})
 	infoWi := widgets.NewText("mp-setup-menu-info", infoItems[0], true, true, w/2, 3*h/4)
 
@@ -49,9 +51,14 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 			myIP := localAddr.IP.String()
 			conn.Close()
 
-			server, _ = net.Listen("tcp", myIP+":"+tcpPort)
+			tempServer, err := net.Listen("tcp", myIP+"111:"+tcpPort)
 
+			if err != nil {
+				g.Update(errorWi.ChangeText("\u001b[31mCould not create a server. Make sure the port 9001 is free."))
+			} else {
+				server = tempServer
 			g.Update(createWi.ChangeText(fmt.Sprintf("Room created at %s", myIP)))
+			}
 
 		case 1:
 			isHost = false
@@ -66,11 +73,10 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 			})
 			ipInputWi.Layout(g)
 			g.SetCurrentView("mp-setup-join")
-
 		}
 	})
 
-	g.SetManager(infoWi, menuWi)
+	g.SetManager(infoWi, menuWi, errorWi)
 	g.Update(func(*gocui.Gui) error {
 		g.SetCurrentView("mp-setup-menu")
 		menuWi.Layout(g)
