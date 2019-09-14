@@ -58,7 +58,8 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 
 			ipInputWi := widgets.NewInput("mp-setup-join", true, true, 3*w/4, h/2, w/4, 3, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
 				if key == gocui.KeyEnter {
-					// IP := v.Buffer()[:len(v.Buffer())-1]
+					IP := v.Buffer()[:len(v.Buffer())-1]
+					conn, _ = net.Dial("tcp", IP+":"+tcpPort)
 					return false
 				}
 				return !(len(v.Buffer()) == 0 && ch == 0)
