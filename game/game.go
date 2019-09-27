@@ -33,7 +33,8 @@ func ChooseText() (string, error) {
 type MessageType string
 
 const (
-	changeName MessageType = "change-name"
+	// ChangeName is for changing usernames
+	ChangeName MessageType = "change-name"
 )
 
 // Parse returns message type and message itself from a connection

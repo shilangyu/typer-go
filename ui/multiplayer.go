@@ -3,6 +3,7 @@ package ui
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"os"
 	"strconv"
@@ -97,11 +98,6 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 // CreateMultiplayerRoom creates a room for multiplayer
 func CreateMultiplayerRoom(g *gocui.Gui) error {
 	w, h := g.Size()
-	if srv != nil {
-		go srv.Accept()
-	} else {
-		go clt.Listen()
-	}
 
 	IPWi := widgets.NewText("mp-room-ip", utils.IPv4(), true, true, w/2, h/6)
 	inputWi := widgets.NewInput("mp-room-input", true, true, w/2, h/4, w/2, 3, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
@@ -115,8 +111,26 @@ func CreateMultiplayerRoom(g *gocui.Gui) error {
 		}
 		return !(len(v.Buffer()) == 0 && ch == 0)
 	})
+	playerListWi := widgets.NewText("mp-room-list", strings.Repeat(strings.Repeat(" ", w/2)+"\n", h/3), true, true, w/2, 3*h/5)
 
-	g.SetManager(inputWi, IPWi)
+	if srv != nil {
+		go srv.Accept()
+		srv.Subscribe(func(t game.MessageType) {
+			switch t {
+			case game.ChangeName:
+				s := ""
+				for _, client := range srv.Others {
+					s += client.Name + "\n"
+				}
+				ioutil.WriteFile("cock", []byte(s), 0644)
+				g.Update(playerListWi.ChangeText(s))
+			}
+		})
+	} else {
+		go clt.Listen()
+	}
+
+	g.SetManager(inputWi, IPWi, playerListWi)
 	g.Update(func(*gocui.Gui) error {
 		inputWi.Layout(g)
 		v, err := g.SetCurrentView("mp-room-input")

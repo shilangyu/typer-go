@@ -24,7 +24,9 @@ type Server struct {
 	// Server is an instance of net.Listener to control server logic
 	Server net.Listener
 	// Others has connection to clients
-	Others []Other
+	Others []*Other
+	// Callback is fired when a message comes
+	Callback func(t MessageType)
 }
 
 // Accept listens for connections
@@ -33,14 +35,19 @@ func (s *Server) Accept() {
 		conn, err := s.Server.Accept()
 
 		if err == nil {
-			newOther := Other{
+			newOther := &Other{
 				Conn: conn,
 			}
 			s.Others = append(s.Others, newOther)
 
-			go s.Listen(&newOther)
+			go s.Listen(newOther)
 		}
 	}
+}
+
+// Subscribe creates a callback
+func (s *Server) Subscribe(cb func(t MessageType)) {
+	s.Callback = cb
 }
 
 // Listen listens to messages from client
@@ -51,9 +58,15 @@ func (s *Server) Listen(other *Other) {
 		data, err := reader.ReadString('\n')
 
 		if err == nil {
-			switch t, msg := Parse(data); t {
-			case changeName:
+			t, msg := Parse(data)
+
+			switch t {
+			case ChangeName:
 				other.Name = msg
+			}
+
+			if s.Callback != nil {
+				s.Callback(t)
 			}
 		}
 	}
