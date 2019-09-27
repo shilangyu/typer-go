@@ -50,6 +50,11 @@ func (s State) Wpm() float64 {
 	return float64(s.CurrWord) / time.Since(s.StartTime).Minutes()
 }
 
+// Progress returns a float in the (0;1) range represending the progress made
+func (s State) Progress() float64 {
+	return float64(s.CurrWord) / float64(len(s.Words))
+}
+
 // IncError increments the error count
 func (s *State) IncError() {
 	s.wordErrors++
