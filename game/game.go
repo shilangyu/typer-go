@@ -28,3 +28,21 @@ func ChooseText() (string, error) {
 
 	return texts[rand.Intn(len(texts))], nil
 }
+
+// MessageType defines available commands
+type MessageType string
+
+const (
+	newPlayer MessageType = "new-player"
+)
+
+// Parser returns message type and message itself from a connection
+func Parser(data string) (MessageType, string) {
+	s := strings.Split(data[:len(data)-1], ":")
+	return MessageType(s[0]), strings.Join(s[1:], ":")
+}
+
+// Compose creates a data string for connections
+func Compose(t MessageType, msg string) []byte {
+	return []byte(string(t) + ":" + msg + "\n")
+}

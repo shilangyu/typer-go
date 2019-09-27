@@ -99,6 +99,8 @@ func CreateMultiplayerRoom(g *gocui.Gui) error {
 	w, h := g.Size()
 	if srv != nil {
 		go srv.Listen()
+	} else {
+		go clt.Listen()
 	}
 
 	IPWi := widgets.NewText("mp-room-ip", utils.IPv4(), true, true, w/2, h/6)
@@ -107,7 +109,7 @@ func CreateMultiplayerRoom(g *gocui.Gui) error {
 			if srv != nil {
 				srv.Name = v.Buffer()[:len(v.Buffer())-1]
 			} else {
-				clt.Name = v.Buffer()[:len(v.Buffer())-1]
+				clt.ConfirmUsername(v.Buffer()[:len(v.Buffer())-1])
 			}
 			return false
 		}

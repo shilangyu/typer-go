@@ -1,6 +1,10 @@
 package game
 
-import "net"
+import (
+	"bufio"
+	"fmt"
+	"net"
+)
 
 // Server is a state manager for the server
 type Server struct {
@@ -17,6 +21,21 @@ func (s *Server) Listen() {
 
 		if err == nil {
 			s.Others = append(s.Others, conn)
+
+			go func() {
+				reader := bufio.NewReader(conn)
+
+				for {
+					data, err := reader.ReadString('\n')
+
+					if err == nil {
+						switch t, msg := Parser(data); t {
+						case newPlayer:
+							fmt.Println(msg)
+						}
+					}
+				}
+			}()
 		}
 	}
 }
