@@ -8,9 +8,13 @@ import (
 
 // Server is a state manager for the server
 type Server struct {
+	// State is an inheritance to store State logic
 	State
-	Name   string
+	// Name is the username
+	Name string
+	// Server is an instance of net.Listener to control server logic
 	Server net.Listener
+	// Others has connection to clients
 	Others []net.Conn
 }
 
