@@ -33,11 +33,11 @@ func ChooseText() (string, error) {
 type MessageType string
 
 const (
-	newPlayer MessageType = "new-player"
+	changeName MessageType = "change-name"
 )
 
-// Parser returns message type and message itself from a connection
-func Parser(data string) (MessageType, string) {
+// Parse returns message type and message itself from a connection
+func Parse(data string) (MessageType, string) {
 	s := strings.Split(data[:len(data)-1], ":")
 	return MessageType(s[0]), strings.Join(s[1:], ":")
 }

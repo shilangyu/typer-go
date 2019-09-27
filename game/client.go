@@ -24,8 +24,8 @@ func (c *Client) Listen() {
 		data, err := reader.ReadString('\n')
 
 		if err == nil {
-			switch t, msg := Parser(data); t {
-			case newPlayer:
+			switch t, msg := Parse(data); t {
+			case changeName:
 				fmt.Println(msg)
 
 			}
@@ -36,5 +36,5 @@ func (c *Client) Listen() {
 // ConfirmUsername sets a username and informs the server about it
 func (c *Client) ConfirmUsername(username string) {
 	c.Name = username
-	c.Conn.Write(Compose(newPlayer, username))
+	c.Conn.Write(Compose(changeName, username))
 }

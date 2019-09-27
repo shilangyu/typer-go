@@ -39,9 +39,8 @@ func (s *Server) Listen(conn net.Conn) {
 		data, err := reader.ReadString('\n')
 
 		if err == nil {
-			switch t, msg := Parser(data); t {
-			case newPlayer:
-				fmt.Println(msg)
+			switch t, msg := Parse(data); t {
+			case changeName:
 			}
 		}
 	}
