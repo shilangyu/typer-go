@@ -1,6 +1,9 @@
 package utils
 
-import "strings"
+import (
+	"net"
+	"strings"
+)
 
 // StringDimensions returns the width and height of a string
 // where w = longest line, h = amount of lines
@@ -28,4 +31,13 @@ func Center(s []string) (res []string) {
 	}
 
 	return
+}
+
+// IPv4 returns users ipv4 as a string
+func IPv4() string {
+	conn, _ := net.Dial("udp", "8.8.8.8:80")
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+	myIP := localAddr.IP.String()
+	conn.Close()
+	return myIP
 }

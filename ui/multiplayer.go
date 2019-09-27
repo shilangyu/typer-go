@@ -17,9 +17,8 @@ import (
 
 const tcpPort = "9001"
 
-var isHost bool
-var server net.Listener
-var conn net.Conn
+var srv *game.Server
+var clt *game.Client
 
 // CreateMultiplayerSetup creates multiplayer room creation
 func CreateMultiplayerSetup(g *gocui.Gui) error {
@@ -36,7 +35,7 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 	}, func(i int) {
 		switch i {
 		case 0:
-			isHost = true
+			srv = &game.Server{}
 
 			createWi := widgets.NewText("mp-setup-create", strings.Repeat(" ", w/4-3), true, true, 3*w/4+1, h/2)
 			createWi.Layout(g)
@@ -44,12 +43,7 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 
 			g.Update(createWi.ChangeText("Creating a room..."))
 
-			conn, _ := net.Dial("udp", "8.8.8.8:80")
-			localAddr := conn.LocalAddr().(*net.UDPAddr)
-			myIP := localAddr.IP.String()
-			conn.Close()
-
-			tempServer, err := net.Listen("tcp", myIP+":"+tcpPort)
+			tempServer, err := net.Listen("tcp", utils.IPv4()+":"+tcpPort)
 
 			if err != nil {
 				g.Update(func(g *gocui.Gui) error {
@@ -60,13 +54,12 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 			} else {
 				g.DeleteKeybindings("mp-setup-menu")
 
-				server = tempServer
-				g.Update(createWi.ChangeText(fmt.Sprintf("Room created at %s", myIP)))
-				time.AfterFunc(2*time.Second, func() { CreateMultiplayer(g) })
+				srv.Server = tempServer
+				CreateMultiplayerRoom(g)
 			}
 
 		case 1:
-			isHost = false
+			clt = &game.Client{}
 
 			ipInputWi := widgets.NewInput("mp-setup-join", true, true, 3*w/4, h/2, w/4, 3, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
 				if key == gocui.KeyEnter {
@@ -79,8 +72,8 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 							return g.DeleteView("mp-setup-join")
 						})
 					} else {
-						conn = tempConn
-						CreateMultiplayer(g)
+						clt.Conn = tempConn
+						CreateMultiplayerRoom(g)
 					}
 					return false
 				}
@@ -99,6 +92,37 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 	})
 
 	return keybindings(g, CreateWelcome)
+}
+
+// CreateMultiplayerRoom creates a room for multiplayer
+func CreateMultiplayerRoom(g *gocui.Gui) error {
+	w, h := g.Size()
+	if srv != nil {
+		go srv.Listen()
+	}
+
+	IPWi := widgets.NewText("mp-room-ip", utils.IPv4(), true, true, w/2, h/6)
+	inputWi := widgets.NewInput("mp-room-input", true, true, w/2, h/4, w/2, 3, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
+		if key == gocui.KeyEnter {
+			if srv != nil {
+				srv.Name = v.Buffer()[:len(v.Buffer())-1]
+			} else {
+				clt.Name = v.Buffer()[:len(v.Buffer())-1]
+			}
+			return false
+		}
+		return !(len(v.Buffer()) == 0 && ch == 0)
+	})
+
+	g.SetManager(inputWi, IPWi)
+	g.Update(func(*gocui.Gui) error {
+		inputWi.Layout(g)
+		v, err := g.SetCurrentView("mp-room-input")
+		v.Title = "username"
+		return err
+	})
+
+	return keybindings(g, CreateMultiplayerSetup)
 }
 
 // CreateMultiplayer creates multiplayer screen widgets
