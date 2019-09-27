@@ -10,13 +10,6 @@ type Server struct {
 	Others []net.Conn
 }
 
-// Client is a state manager for the client
-type Client struct {
-	State
-	Name string
-	Conn net.Conn
-}
-
 // Listen listens for connections
 func (s *Server) Listen() {
 	for {
