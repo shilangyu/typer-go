@@ -3,7 +3,6 @@ package ui
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"strconv"
@@ -101,15 +100,23 @@ func CreateMultiplayerRoom(g *gocui.Gui) error {
 
 	IPWi := widgets.NewText("mp-room-ip", utils.IPv4(), true, true, w/2, h/6)
 	inputWi := widgets.NewInput("mp-room-input", true, true, w/2, h/4, w/2, 3, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
-		if key == gocui.KeyEnter {
-			if srv != nil {
-				srv.Name = v.Buffer()[:len(v.Buffer())-1]
-			} else {
-				clt.ConfirmUsername(v.Buffer()[:len(v.Buffer())-1])
-			}
+		if len(v.Buffer()) == 0 && ch == 0 {
 			return false
 		}
-		return !(len(v.Buffer()) == 0 && ch == 0)
+
+		if key == gocui.KeyEnter {
+			return false
+		}
+
+		gocui.DefaultEditor.Edit(v, key, ch, mod)
+
+		if srv != nil {
+			srv.Name = v.Buffer()[:len(v.Buffer())-1]
+		} else {
+			clt.ConfirmUsername(v.Buffer()[:len(v.Buffer())-1])
+		}
+
+		return false
 	})
 	playerListWi := widgets.NewText("mp-room-list", strings.Repeat(strings.Repeat(" ", w/2)+"\n", h/3), true, true, w/2, 3*h/5)
 
@@ -122,7 +129,6 @@ func CreateMultiplayerRoom(g *gocui.Gui) error {
 				for _, client := range srv.Others {
 					s += client.Name + "\n"
 				}
-				ioutil.WriteFile("cock", []byte(s), 0644)
 				g.Update(playerListWi.ChangeText(s))
 			}
 		})
