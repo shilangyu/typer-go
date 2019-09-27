@@ -35,6 +35,8 @@ type MessageType string
 const (
 	// ChangeName is for changing usernames
 	ChangeName MessageType = "change-name"
+	// ExitPlayer is for players leaving the game
+	ExitPlayer MessageType = "exit-player"
 )
 
 // Parse returns message type and message itself from a connection

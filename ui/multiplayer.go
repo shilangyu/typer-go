@@ -123,13 +123,19 @@ func CreateMultiplayerRoom(g *gocui.Gui) error {
 	if srv != nil {
 		go srv.Accept()
 		srv.Subscribe(func(t game.MessageType) {
-			switch t {
-			case game.ChangeName:
+			update := func() {
 				s := ""
 				for _, client := range srv.Others {
 					s += client.Name + "\n"
 				}
 				g.Update(playerListWi.ChangeText(s))
+			}
+
+			switch t {
+			case game.ChangeName:
+				fallthrough
+			case game.ExitPlayer:
+				update()
 			}
 		})
 	} else {

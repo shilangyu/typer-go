@@ -57,18 +57,33 @@ func (s *Server) Listen(other *Other) {
 	for {
 		data, err := reader.ReadString('\n')
 
-		if err == nil {
-			t, msg := Parse(data)
+		if err != nil {
+			other.Conn.Close()
+			for i, client := range s.Others {
+				if client == other {
+					s.Others = append(s.Others[:i], s.Others[i+1:]...)
 
-			switch t {
-			case ChangeName:
-				other.Name = msg
-			}
+					if s.Callback != nil {
+						s.Callback(ExitPlayer)
+					}
 
-			if s.Callback != nil {
-				s.Callback(t)
+					break
+				}
 			}
+			return
 		}
+
+		t, msg := Parse(data)
+
+		switch t {
+		case ChangeName:
+			other.Name = msg
+		}
+
+		if s.Callback != nil {
+			s.Callback(t)
+		}
+
 	}
 }
 
