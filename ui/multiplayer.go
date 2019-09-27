@@ -98,7 +98,7 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 func CreateMultiplayerRoom(g *gocui.Gui) error {
 	w, h := g.Size()
 	if srv != nil {
-		go srv.Listen()
+		go srv.Accept()
 	} else {
 		go clt.Listen()
 	}

@@ -14,28 +14,38 @@ type Server struct {
 	Others []net.Conn
 }
 
-// Listen listens for connections
-func (s *Server) Listen() {
+// Accept listens for connections
+func (s *Server) Accept() {
 	for {
 		conn, err := s.Server.Accept()
 
 		if err == nil {
 			s.Others = append(s.Others, conn)
 
-			go func() {
-				reader := bufio.NewReader(conn)
-
-				for {
-					data, err := reader.ReadString('\n')
-
-					if err == nil {
-						switch t, msg := Parser(data); t {
-						case newPlayer:
-							fmt.Println(msg)
-						}
-					}
-				}
-			}()
+			go s.Listen(conn)
 		}
+	}
+}
+
+// Listen listens to messages from client
+func (s *Server) Listen(conn net.Conn) {
+	reader := bufio.NewReader(conn)
+
+	for {
+		data, err := reader.ReadString('\n')
+
+		if err == nil {
+			switch t, msg := Parser(data); t {
+			case newPlayer:
+				fmt.Println(msg)
+			}
+		}
+	}
+}
+
+// Inform messages all clients about something
+func (s *Server) Inform(msg []byte) {
+	for _, client := range s.Others {
+		client.Write(msg)
 	}
 }
