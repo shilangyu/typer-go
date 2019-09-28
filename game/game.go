@@ -39,6 +39,9 @@ const (
 	// ExitPlayer is for players leaving the game
 	// payload = nil
 	ExitPlayer MessageType = "exit-player"
+	// StartGame is for starting the game
+	// payload = unix timestamp of when it starts
+	StartGame MessageType = "start-game"
 )
 
 // Parse returns message type and message itself from a connection

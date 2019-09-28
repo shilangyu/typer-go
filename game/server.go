@@ -2,7 +2,9 @@ package game
 
 import (
 	"bufio"
+	"fmt"
 	"net"
+	"time"
 )
 
 // Other contains all information needed about other players
@@ -85,6 +87,11 @@ func (s *Server) Listen(other *Other) {
 		}
 
 	}
+}
+
+// StartGame informs client the game is starting
+func (s *Server) StartGame() {
+	s.Inform(Compose(StartGame, fmt.Sprintf("%d", time.Now().Add(time.Second*5).Unix())))
 }
 
 // Inform messages all clients about something

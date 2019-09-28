@@ -99,12 +99,26 @@ func CreateMultiplayerRoom(g *gocui.Gui) error {
 	w, h := g.Size()
 
 	IPWi := widgets.NewText("mp-room-ip", utils.IPv4(), true, true, w/2, h/6)
+	playerListWi := widgets.NewText("mp-room-list", strings.Repeat(strings.Repeat(" ", w/2)+"\n", h/3), true, true, w/2, 3*h/5)
+
+	update := func() {
+		s := srv.Name + "\n"
+		for _, client := range srv.Others {
+			s += client.Name + "\n"
+		}
+		g.Update(playerListWi.ChangeText(s))
+	}
+
 	inputWi := widgets.NewInput("mp-room-input", true, true, w/2, h/4, w/2, 3, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
 		if len(v.Buffer()) == 0 && ch == 0 {
 			return false
 		}
 
 		if key == gocui.KeyEnter {
+			if srv != nil {
+				srv.StartGame()
+				CreateMultiplayer(g)
+			}
 			return false
 		}
 
@@ -112,25 +126,17 @@ func CreateMultiplayerRoom(g *gocui.Gui) error {
 
 		if srv != nil {
 			srv.Name = v.Buffer()[:len(v.Buffer())-1]
+			update()
 		} else {
 			clt.ConfirmUsername(v.Buffer()[:len(v.Buffer())-1])
 		}
 
 		return false
 	})
-	playerListWi := widgets.NewText("mp-room-list", strings.Repeat(strings.Repeat(" ", w/2)+"\n", h/3), true, true, w/2, 3*h/5)
 
 	if srv != nil {
 		go srv.Accept()
 		srv.Subscribe(func(t game.MessageType) {
-			update := func() {
-				s := ""
-				for _, client := range srv.Others {
-					s += client.Name + "\n"
-				}
-				g.Update(playerListWi.ChangeText(s))
-			}
-
 			switch t {
 			case game.ChangeName:
 				fallthrough
