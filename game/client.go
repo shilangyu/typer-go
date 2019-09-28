@@ -24,9 +24,9 @@ func (c *Client) Listen() {
 		data, err := reader.ReadString('\n')
 
 		if err == nil {
-			switch t, msg := Parse(data); t {
+			switch t, payload := Parse(data); t {
 			case ChangeName:
-				fmt.Println(msg)
+				fmt.Println(payload)
 
 			}
 		}

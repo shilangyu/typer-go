@@ -73,11 +73,11 @@ func (s *Server) Listen(other *Other) {
 			return
 		}
 
-		t, msg := Parse(data)
+		t, payload := Parse(data)
 
 		switch t {
 		case ChangeName:
-			other.Name = msg
+			other.Name = payload
 		}
 
 		if s.Callback != nil {

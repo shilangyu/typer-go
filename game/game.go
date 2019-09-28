@@ -34,18 +34,20 @@ type MessageType string
 
 const (
 	// ChangeName is for changing usernames
+	// payload = new username
 	ChangeName MessageType = "change-name"
 	// ExitPlayer is for players leaving the game
+	// payload = nil
 	ExitPlayer MessageType = "exit-player"
 )
 
 // Parse returns message type and message itself from a connection
-func Parse(data string) (MessageType, string) {
-	s := strings.Split(data[:len(data)-1], ":")
+func Parse(payload string) (MessageType, string) {
+	s := strings.Split(payload[:len(payload)-1], ":")
 	return MessageType(s[0]), strings.Join(s[1:], ":")
 }
 
 // Compose creates a data string for connections
-func Compose(t MessageType, msg string) []byte {
-	return []byte(string(t) + ":" + msg + "\n")
+func Compose(t MessageType, payload string) []byte {
+	return []byte(string(t) + ":" + payload + "\n")
 }
