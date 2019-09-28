@@ -91,7 +91,9 @@ func (s *State) PaintDiff(differ string) (ansiWord string) {
 		case settings.ErrorDisplayTyped:
 			ansiWord += string(differ[i])
 		case settings.ErrorDisplayText:
-			ansiWord += string(toColor[i])
+			if i < len(toColor) {
+				ansiWord += string(toColor[i])
+			}
 		}
 	}
 	ansiWord += "\u001b[0m"
