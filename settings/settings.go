@@ -25,7 +25,7 @@ func init() {
 
 	settingsPath = path.Join(userConfigDir, "typer-go", "settings.yaml")
 	if _, err := os.Stat(settingsPath); os.IsNotExist(err) {
-		err := os.MkdirAll(path.Dir(settingsPath), 0644)
+		err := os.MkdirAll(path.Dir(settingsPath), os.ModePerm)
 		utils.Check(err)
 
 		file, err := os.Create(settingsPath)
@@ -47,5 +47,5 @@ func Save() error {
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(settingsPath, bytes, 0644)
+	return ioutil.WriteFile(settingsPath, bytes, os.ModePerm)
 }

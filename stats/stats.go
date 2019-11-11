@@ -42,7 +42,7 @@ func init() {
 
 	statsPath = path.Join(userConfigDir, "typer-go", "stats.json")
 	if _, err := os.Stat(statsPath); os.IsNotExist(err) {
-		err := os.MkdirAll(path.Dir(statsPath), 0644)
+		err := os.MkdirAll(path.Dir(statsPath), os.ModePerm)
 		utils.Check(err)
 
 		file, err := os.Create(statsPath)
@@ -64,7 +64,7 @@ func Save() error {
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(statsPath, bytes, 0644)
+	return ioutil.WriteFile(statsPath, bytes, os.ModePerm)
 }
 
 // AddHistory appends wpm with a timestamp to the history property
