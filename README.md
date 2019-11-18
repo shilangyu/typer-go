@@ -1,7 +1,7 @@
 # typer-go
 
 [![](https://goreportcard.com/badge/github.com/shilangyu/typer-go)](https://goreportcard.com/report/github.com/shilangyu/typer-go)
-[![Build Status](https://travis-ci.com/shilangyu/typer-go.svg?branch=master)](https://travis-ci.com/shilangyu/typer-go)
+![](https://github.com/shilangyu/typer-go/workflows/ci/badge.svg)
 
 Typer [TUI](https://en.wikipedia.org/wiki/Text-based_user_interface) game implemented in golang!
 
