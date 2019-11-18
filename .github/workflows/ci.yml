@@ -1,0 +1,47 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v1
+
+    - name: Get dependencies
+      run: |
+        go get -v -t -d ./...
+      
+    - name: Build Linux
+      run: go build -o typer-go -v . 
+        
+    - name: Build Windows
+      if: startsWith(github.ref, 'refs/tags/') && github.repository == 'shilangyu/typer-go'
+      continue-on-error: true
+      run: GOOS=windows GOARCH=386 go build -o typer-go.exe -v . 
+    
+    - name: Build OSX
+      if: startsWith(github.ref, 'refs/tags/') && github.repository == 'shilangyu/typer-go'
+      continue-on-error: true
+      run: GOOS=darwin GOARCH=amd64 go build -o typer-go.dmg -v . 
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/') && github.repository == 'shilangyu/typer-go'
+      with:
+        files: |
+          typer-go
+          typer-go.exe
+          typer-go.dmg
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 
