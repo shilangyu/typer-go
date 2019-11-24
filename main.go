@@ -3,20 +3,28 @@ package main
 import (
 	"log"
 
-	"github.com/jroimartin/gocui"
+	"github.com/gdamore/tcell"
+	"github.com/rivo/tview"
 	"github.com/shilangyu/typer-go/ui"
 	"github.com/shilangyu/typer-go/utils"
 )
 
 func main() {
-	g, err := gocui.NewGui(gocui.OutputNormal)
-	utils.Check(err)
-	defer g.Close()
+	tview.Styles.PrimitiveBackgroundColor = tcell.ColorDefault
+	// tview.Styles.PrimaryTextColor = tcell.ColorBlack
 
-	err = ui.CreateWelcome(g)
+	app := tview.NewApplication()
+	defer app.Stop()
+
+	app.SetBeforeDrawFunc(func(s tcell.Screen) bool {
+		s.Clear()
+		return false
+	})
+
+	err := ui.CreateWelcome(app)
 	utils.Check(err)
 
-	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
+	if err := app.Run(); err != nil {
 		log.Panicln(err)
 	}
 }

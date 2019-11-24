@@ -91,7 +91,7 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 		return nil
 	})
 
-	return keybindings(g, CreateWelcome)
+	return keybindings(g, CreateMultiplayer)
 }
 
 // CreateMultiplayerRoom creates a room for multiplayer
@@ -246,7 +246,7 @@ func CreateMultiplayer(g *gocui.Gui) error {
 					case 0:
 						CreateSingleplayer(g)
 					case 1:
-						CreateWelcome(g)
+						// CreateWelcome(g)
 					}
 				})
 				g.Update(func(g *gocui.Gui) error {

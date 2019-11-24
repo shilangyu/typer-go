@@ -97,7 +97,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 					case 0:
 						CreateSingleplayer(g)
 					case 1:
-						CreateWelcome(g)
+						// CreateWelcome(g)
 					}
 				})
 				g.Update(func(g *gocui.Gui) error {
@@ -133,7 +133,7 @@ func CreateSingleplayer(g *gocui.Gui) error {
 		return nil
 	})
 
-	return keybindings(g, CreateWelcome)
+	return keybindings(g, CreateSingleplayer) //CreateWelcome)
 }
 
 // takes a slice of words and length of a line

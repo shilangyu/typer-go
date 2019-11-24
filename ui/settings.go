@@ -29,7 +29,7 @@ func CreateSettings(g *gocui.Gui) error {
 	g.SetManager(menuWi, infoWi)
 	defer currSetting(g)(0)
 
-	if err := keybindings(g, CreateWelcome); err != nil {
+	if err := keybindings(g, CreateSettings); err != nil {
 		return err
 	}
 	if err := g.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
