@@ -19,8 +19,8 @@ type Other struct {
 
 // Server is a state manager for the server
 type Server struct {
-	// State is an inheritance to store State logic
-	State
+	// State stores State logic
+	State *State
 	// Name is the username
 	Name string
 	// Server is an instance of net.Listener to control server logic

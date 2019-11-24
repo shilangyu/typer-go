@@ -3,6 +3,7 @@ package ui
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"net"
 	"os"
 	"strconv"
@@ -165,7 +166,15 @@ func CreateMultiplayer(g *gocui.Gui) error {
 	if err != nil {
 		return err
 	}
-	state := game.NewState(text)
+
+	var state *game.State
+	if srv != nil {
+		srv.State = game.NewState(text)
+		state = srv.State
+	} else {
+		clt.State = game.NewState(text)
+		state = clt.State
+	}
 
 	w, h := g.Size()
 
@@ -182,6 +191,11 @@ func CreateMultiplayer(g *gocui.Gui) error {
 	var textWis []*widgets.Text
 	for i, p := range points {
 		textWis = append(textWis, widgets.NewText("multiplayer-text-"+strconv.Itoa(i), state.Words[i], false, false, w/5+1+p.x, p.y))
+	}
+
+	progressWi := widgets.NewText("multiplayer-progress", strings.Repeat(" ", w/5), false, false, 1, h/2)
+	updateProgress := func() {
+		g.Update(progressWi.ChangeText(strings.Repeat("█", int(math.Floor(state.Progress()*float64(w/5))))))
 	}
 
 	var inputWi *widgets.Input
@@ -235,6 +249,7 @@ func CreateMultiplayer(g *gocui.Gui) error {
 
 		if b == state.Words[state.CurrWord] {
 			state.NextWord()
+			updateProgress()
 			if state.CurrWord == len(state.Words) {
 				state.End()
 
@@ -274,6 +289,7 @@ func CreateMultiplayer(g *gocui.Gui) error {
 		wis = append(wis, text)
 	}
 	wis = append(wis, inputWi)
+	wis = append(wis, progressWi)
 
 	g.SetManager(wis...)
 

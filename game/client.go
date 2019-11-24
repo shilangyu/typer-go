@@ -8,8 +8,8 @@ import (
 
 // Client is a state manager for the client
 type Client struct {
-	// State is an inheritance to store State logic
-	State
+	// State stores State logic
+	State *State
 	// Name is the username
 	Name string
 	// Conn holds the connection to the server
