@@ -32,7 +32,7 @@ func CreateSettings(g *gocui.Gui) error {
 	if err := keybindings(g, CreateWelcome); err != nil {
 		return err
 	}
-	if err := g.SetKeybinding("", gocui.KeyTab, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
+	if err := g.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
 		focusedView++
 		_, err := g.SetCurrentView("settings-" + []string{"menu", "side"}[focusedView%2])
 		return err

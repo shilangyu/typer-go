@@ -30,7 +30,6 @@ The whole TUI has mouse support!
 | <kbd>↑</kbd>      | menu navigation up   |
 | <kbd>↓</kbd>      | menu navigation down |
 | <kbd>enter</kbd>  | confirm              |
-| <kbd>tab</kbd>    | change view focus    |
 | <kbd>ctrl+q</kbd> | back                 |
 | <kbd>ctrl+c</kbd> | exit                 |
 
