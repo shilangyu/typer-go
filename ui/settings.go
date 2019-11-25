@@ -1,107 +1,46 @@
 package ui
 
 import (
-	"github.com/jroimartin/gocui"
-	widgets "github.com/shilangyu/gocui-widgets"
+	"github.com/rivo/tview"
 	"github.com/shilangyu/typer-go/settings"
-	"github.com/shilangyu/typer-go/utils"
 )
 
 // CreateSettings creates a screen with settings
-func CreateSettings(g *gocui.Gui) error {
-	var focusedView int
+func CreateSettings(app *tview.Application) error {
+	settingsWi := tview.NewForm().
+		AddDropDown(
+			"highlight",
+			[]string{settings.HighlightBackground.String(), settings.HighlightText.String()},
+			int(settings.I.Highlight),
+			func(option string, index int) {
+				settings.I.Highlight = settings.Highlight(index)
+				settings.Save()
+			}).
+		AddDropDown(
+			"error display",
+			[]string{settings.ErrorDisplayText.String(), settings.ErrorDisplayTyped.String()},
+			int(settings.I.ErrorDisplay),
+			func(option string, index int) {
+				settings.I.ErrorDisplay = settings.ErrorDisplay(index)
+				settings.Save()
+			}).
+		AddInputField(
+			"texts path",
+			settings.I.TextsPath,
+			10,
+			nil,
+			func(text string) {
+				settings.I.TextsPath = text
+				settings.Save()
+			}).
+		AddButton("OK", func() { CreateWelcome(app) })
 
-	w, h := g.Size()
+	// infoItems := utils.Center([]string{
+	// 	"How your text should be highlighted",
+	// 	"What part should be displayed when you type an error",
+	// 	"Path to your typer texts (separated with a new line)",
+	// })
 
-	infoItems := utils.Center([]string{
-		"How your text should be highlighted",
-		"What part should be displayed when you type an error",
-		"Path to your typer texts (separated with a new line)",
-	})
-	infoWi := widgets.NewText("settings-menu-info", infoItems[0], true, true, w/2, 3*h/4)
-
-	menuItems := utils.Center([]string{"highlight", "error display", "texts path"})
-	menuWi := widgets.NewMenu("settings-menu", menuItems, true, w/4, h/2, func(i int) {
-		g.Update(infoWi.ChangeText(infoItems[i]))
-		currSetting(g)(i)
-	}, nil)
-
-	g.SetManager(menuWi, infoWi)
-	defer currSetting(g)(0)
-
-	if err := keybindings(g, CreateSettings); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
-		focusedView++
-		_, err := g.SetCurrentView("settings-" + []string{"menu", "side"}[focusedView%2])
-		return err
-	}); err != nil {
-		return err
-	}
-
+	app.SetRoot(settingsWi, true)
 	return nil
-}
-
-func currSetting(g *gocui.Gui) func(i int) {
-	return func(i int) {
-		w, h := g.Size()
-
-		g.DeleteKeybindings("settings-side")
-		g.DeleteView("settings-side")
-
-		x, y := 3*w/4, h/2
-		var sideWi gocui.Manager
-		changes := func(g *gocui.Gui) {}
-
-		switch i {
-		case 0:
-			menuItems := utils.Center([]string{
-				settings.HighlightBackground.String(),
-				settings.HighlightText.String(),
-			})
-			tempSideWi := widgets.NewMenu("settings-side", menuItems, true, x, y, func(i int) {
-				settings.I.Highlight = settings.Highlight(i)
-				settings.Save()
-			}, nil)
-			changes = func(g *gocui.Gui) { tempSideWi.ChangeSelected(int(settings.I.Highlight))(g) }
-
-			sideWi = tempSideWi
-		case 1:
-			menuItems := utils.Center([]string{
-				settings.ErrorDisplayTyped.String(),
-				settings.ErrorDisplayText.String(),
-			})
-			tempSideWi := widgets.NewMenu("settings-side", menuItems, true, x, y, func(i int) {
-				settings.I.ErrorDisplay = settings.ErrorDisplay(i)
-				settings.Save()
-			}, nil)
-			changes = func(g *gocui.Gui) { tempSideWi.ChangeSelected(int(settings.I.ErrorDisplay))(g) }
-
-			sideWi = tempSideWi
-		case 2:
-			tempSideWi := widgets.NewInput("settings-side", true, true, x, y, w/4, 3, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
-				if key == gocui.KeyEnter || len(v.Buffer()) == 0 && ch == 0 {
-					return false
-				}
-
-				gocui.DefaultEditor.Edit(v, key, ch, mod)
-
-				settings.I.TextsPath = v.Buffer()[:len(v.Buffer())-1]
-				settings.Save()
-
-				return false
-			})
-			changes = func(g *gocui.Gui) { tempSideWi.ChangeText(settings.I.TextsPath)(g) }
-
-			sideWi = tempSideWi
-		}
-
-		g.Update(func(g *gocui.Gui) error {
-			g.SetCurrentView("settings-menu")
-			sideWi.Layout(g)
-			changes(g)
-			return nil
-		})
-	}
 }

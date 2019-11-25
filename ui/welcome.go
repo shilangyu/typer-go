@@ -15,7 +15,9 @@ func CreateWelcome(app *tview.Application) error {
 		AddItem("single player", "test your typing skills offline!", 'a', nil).
 		AddItem("multi player", "battle against other typers", 'b', nil).
 		AddItem("stats", "TO BE RELEASED", 'c', nil).
-		AddItem("settings", "change app settings", 'd', nil).
+		AddItem("settings", "change app settings", 'd', func() {
+			CreateSettings(app)
+		}).
 		AddItem("exit", "exit the app", 'e', func() {
 			app.Stop()
 		})
@@ -24,8 +26,6 @@ func CreateWelcome(app *tview.Application) error {
 	// 	utils.Check(CreateSingleplayer(g))
 	// case 1:
 	// 	utils.Check(CreateMultiplayerSetup(g))
-	// case 3:
-	// 	utils.Check(CreateSettings(g))
 	// }
 
 	layout := tview.NewFlex().SetDirection(tview.FlexRow).
