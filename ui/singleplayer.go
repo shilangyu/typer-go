@@ -23,8 +23,18 @@ func CreateSingleplayer(app *tview.Application) error {
 		tview.NewTextView().SetText("time: 0s"),
 	}
 
-	// statsFrameWi := widgets.NewCollection("singleplayer-stats", "STATS", false, 0, 0, w/5, h)
-	// textFrameWi := widgets.NewCollection("singleplayer-text", "", false, w/5+1, 0, 4*w/5, 5*h/6+1)
+	pages := tview.NewPages().
+		AddPage("modal", tview.NewModal().
+			SetText("Play again?").
+			AddButtons([]string{"yes", "exit"}).
+			SetDoneFunc(func(index int, label string) {
+				switch index {
+				case 0:
+					CreateSingleplayer(app)
+				case 1:
+					CreateWelcome(app)
+				}
+			}), false, false)
 
 	var textWis []*tview.TextView
 	for _, word := range state.Words {
@@ -69,20 +79,13 @@ func CreateSingleplayer(app *tview.Application) error {
 				state.NextWord()
 				if state.CurrWord == len(state.Words) {
 					state.End()
+					app.QueueUpdateDraw(func() {
+						pages.ShowPage("modal")
 
-					tview.NewModal().
-						SetText("Play again?").
-						AddButtons([]string{"yes", "exit"}).
-						SetDoneFunc(func(index int, label string) {
-							switch index {
-							case 0:
-								CreateSingleplayer(app)
-							case 1:
-								CreateWelcome(app)
-							}
-						}) //.Draw()?
+					})
+				} else {
+					inputWi.SetText("")
 				}
-				inputWi.SetText("")
 			}
 
 			currInput = text
@@ -96,7 +99,9 @@ func CreateSingleplayer(app *tview.Application) error {
 		flexTexts.AddItem(statsWi, len(statsWi.GetText(true))+5, 1, false)
 	}
 	flexTexts.AddItem(inputWi, 0, 1, true)
-	app.SetRoot(flexTexts, true)
+
+	pages.AddPage("game", flexTexts, true, true).SendToBack("game")
+	app.SetRoot(pages, true)
 
 	keybindings(app, CreateWelcome)
 	return nil
