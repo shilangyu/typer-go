@@ -27,8 +27,6 @@ func CreateWelcome(app *tview.Application) error {
 			app.Stop()
 		})
 	// switch i {
-	// case 0:
-	// 	utils.Check(CreateSingleplayer(g))
 	// case 1:
 	// 	utils.Check(CreateMultiplayerSetup(g))
 	// }

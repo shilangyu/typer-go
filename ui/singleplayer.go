@@ -97,8 +97,9 @@ func CreateSingleplayer(app *tview.Application) error {
 	}
 	flexTexts.AddItem(inputWi, 0, 1, true)
 	app.SetRoot(flexTexts, true)
+
+	keybindings(app, CreateWelcome)
 	return nil
-	// return keybindings(g, CreateSingleplayer) //CreateWelcome)
 }
 
 // takes a slice of words and length of a line

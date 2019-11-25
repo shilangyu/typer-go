@@ -91,7 +91,7 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 		return nil
 	})
 
-	return keybindings(g, CreateMultiplayer)
+	return nil //keybindings(g, CreateMultiplayer)
 }
 
 // CreateMultiplayerRoom creates a room for multiplayer
@@ -156,7 +156,7 @@ func CreateMultiplayerRoom(g *gocui.Gui) error {
 		return err
 	})
 
-	return keybindings(g, CreateMultiplayerSetup)
+	return nil //keybindings(g, CreateMultiplayerSetup)
 }
 
 // CreateMultiplayer creates multiplayer screen widgets
@@ -282,7 +282,7 @@ func CreateMultiplayer(g *gocui.Gui) error {
 		return nil
 	})
 
-	return keybindings(g, CreateMultiplayerSetup)
+	return nil //keybindings(g, CreateMultiplayerSetup)
 }
 
 func createServer() (*net.Listener, error) {

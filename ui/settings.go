@@ -42,5 +42,6 @@ func CreateSettings(app *tview.Application) error {
 	// })
 
 	app.SetRoot(settingsWi, true)
+	keybindings(app, CreateWelcome)
 	return nil
 }

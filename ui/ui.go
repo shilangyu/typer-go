@@ -1,21 +1,20 @@
 package ui
 
 import (
-	"github.com/jroimartin/gocui"
+	"github.com/gdamore/tcell"
+	"github.com/rivo/tview"
 )
 
-func keybindings(g *gocui.Gui, goBack func(g *gocui.Gui) error) error {
+func keybindings(app *tview.Application, goBack func(app *tview.Application) error) {
 	if goBack != nil {
-		if err := g.SetKeybinding("", gocui.KeyCtrlQ, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
-			return goBack(g)
-		}); err != nil {
-			return err
-		}
+		app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+			if event.Key() == tcell.KeyEsc {
+				app.QueueUpdateDraw(func() {
+					goBack(app)
+				})
+			}
+
+			return event
+		})
 	}
-
-	return g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit)
-}
-
-func quit(g *gocui.Gui, v *gocui.View) error {
-	return gocui.ErrQuit
 }
