@@ -229,9 +229,9 @@ func CreateMultiplayer(g *gocui.Gui) error {
 			state.IncError()
 		}
 
-		ansiWord := state.PaintDiff(b)
+		// ansiWord := state.PaintDiff(b)
 
-		g.Update(textWis[state.CurrWord].ChangeText(ansiWord))
+		// g.Update(textWis[state.CurrWord].ChangeText(ansiWord))
 
 		if b == state.Words[state.CurrWord] {
 			state.NextWord()
@@ -244,7 +244,7 @@ func CreateMultiplayer(g *gocui.Gui) error {
 				}, func(i int) {
 					switch i {
 					case 0:
-						CreateSingleplayer(g)
+						// CreateSingleplayer(g)
 					case 1:
 						// CreateWelcome(g)
 					}
