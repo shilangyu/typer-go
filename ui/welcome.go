@@ -1,8 +1,6 @@
 package ui
 
 import (
-	"fmt"
-
 	"github.com/common-nighthawk/go-figure"
 	"github.com/rivo/tview"
 	"github.com/shilangyu/typer-go/utils"
@@ -10,8 +8,7 @@ import (
 
 // CreateWelcome creates welcome screen widgets
 func CreateWelcome(app *tview.Application) error {
-	signWi := tview.NewTextView()
-	fmt.Fprint(signWi, figure.NewFigure("typer-go", "", false).String())
+	signWi := tview.NewTextView().SetText(figure.NewFigure("typer-go", "", false).String())
 	menuWi := tview.NewList().
 		AddItem("single player", "test your typing skills offline!", 'a', func() {
 			err := CreateSingleplayer(app)
@@ -31,11 +28,12 @@ func CreateWelcome(app *tview.Application) error {
 	// 	utils.Check(CreateMultiplayerSetup(g))
 	// }
 
-	layout := tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(signWi, 0, 1, false).
-		AddItem(menuWi, 0, 1, true)
+	layout := tview.NewGrid().
+		SetRows(10, 10, 0, 1).
+		SetColumns(10, 5, 0, 5, 10).
+		AddItem(signWi, 1, 1, 1, 3, 0, 0, false).
+		AddItem(menuWi, 2, 2, 1, 1, 0, 0, true)
 
 	app.SetRoot(layout, true)
 	return nil
-	//return keybindings(g, nil)
 }
