@@ -17,17 +17,17 @@ func CreateWelcome(app *tview.Application) error {
 `
 	signWi := tview.NewTextView().SetText(welcomeSign)
 	menuWi := tview.NewList().
-		AddItem("single player", "test your typing skills offline!", 'a', func() {
+		AddItem("single player", "test your typing skills offline!", 0, func() {
 			err := CreateSingleplayer(app)
 			utils.Check(err)
 		}).
-		AddItem("multi player", "battle against other typers", 'b', nil).
-		AddItem("stats", "TO BE RELEASED", 'c', nil).
-		AddItem("settings", "change app settings", 'd', func() {
+		AddItem("multi player", "battle against other typers", 0, nil).
+		AddItem("stats", "TO BE RELEASED", 0, nil).
+		AddItem("settings", "change app settings", 0, func() {
 			err := CreateSettings(app)
 			utils.Check(err)
 		}).
-		AddItem("exit", "exit the app", 'e', func() {
+		AddItem("exit", "exit the app", 0, func() {
 			app.Stop()
 		})
 	// switch i {
