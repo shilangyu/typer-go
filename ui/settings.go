@@ -27,7 +27,7 @@ func CreateSettings(app *tview.Application) error {
 		AddInputField(
 			"texts path",
 			settings.I.TextsPath,
-			10,
+			20,
 			nil,
 			func(text string) {
 				settings.I.TextsPath = text
@@ -35,13 +35,14 @@ func CreateSettings(app *tview.Application) error {
 			}).
 		AddButton("OK", func() { CreateWelcome(app) })
 
-	// infoItems := utils.Center([]string{
-	// 	"How your text should be highlighted",
-	// 	"What part should be displayed when you type an error",
-	// 	"Path to your typer texts (separated with a new line)",
-	// })
+		// infoItems := utils.Center([]string{
+		// 	"How your text should be highlighted",
+		// 	"What part should be displayed when you type an error",
+		// 	"Path to your typer texts (separated with a new line)",
+		// })
+	layout := tview.NewFlex().AddItem(Center(34, 10, settingsWi), 0, 1, true)
 
-	app.SetRoot(settingsWi, true)
+	app.SetRoot(layout, true)
 	keybindings(app, CreateWelcome)
 	return nil
 }

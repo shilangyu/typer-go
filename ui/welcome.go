@@ -1,14 +1,21 @@
 package ui
 
 import (
-	"github.com/common-nighthawk/go-figure"
 	"github.com/rivo/tview"
 	"github.com/shilangyu/typer-go/utils"
 )
 
 // CreateWelcome creates welcome screen widgets
 func CreateWelcome(app *tview.Application) error {
-	signWi := tview.NewTextView().SetText(figure.NewFigure("typer-go", "", false).String())
+	const welcomeSign = `
+ _                                          
+| |_ _   _ _ __   ___ _ __       __ _  ___  
+| __| | | | '_ \ / _ \ '__|____ / _  |/ _ \ 
+| |_| |_| | |_) |  __/ | |_____| (_| | (_) |
+ \__|\__, | .__/ \___|_|        \__, |\___/ 
+     |___/|_|                   |___/       
+`
+	signWi := tview.NewTextView().SetText(welcomeSign)
 	menuWi := tview.NewList().
 		AddItem("single player", "test your typing skills offline!", 'a', func() {
 			err := CreateSingleplayer(app)
@@ -28,11 +35,14 @@ func CreateWelcome(app *tview.Application) error {
 	// 	utils.Check(CreateMultiplayerSetup(g))
 	// }
 
-	layout := tview.NewGrid().
-		SetRows(10, 10, 0, 1).
-		SetColumns(10, 5, 0, 5, 10).
-		AddItem(signWi, 1, 1, 1, 3, 0, 0, false).
-		AddItem(menuWi, 2, 2, 1, 1, 0, 0, true)
+	signW, signH := utils.StringDimensions(welcomeSign)
+	menuW, menuH := 32, menuWi.GetItemCount()*2
+	layout := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(tview.NewBox(), 0, 1, false).
+		AddItem(Center(signW, signH, signWi), 0, 1, false).
+		AddItem(Center(menuW, menuH, menuWi), 0, 1, true).
+		AddItem(tview.NewBox(), 0, 1, false)
 
 	app.SetRoot(layout, true)
 	return nil

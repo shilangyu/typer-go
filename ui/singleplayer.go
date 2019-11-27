@@ -79,10 +79,7 @@ func CreateSingleplayer(app *tview.Application) error {
 				state.NextWord()
 				if state.CurrWord == len(state.Words) {
 					state.End()
-					app.QueueUpdateDraw(func() {
-						pages.ShowPage("modal")
-
-					})
+					pages.ShowPage("modal")
 				} else {
 					inputWi.SetText("")
 				}
@@ -91,16 +88,26 @@ func CreateSingleplayer(app *tview.Application) error {
 			currInput = text
 		})
 
-	flexTexts := tview.NewFlex()
-	for _, textWi := range textWis {
-		flexTexts.AddItem(textWi, len(textWi.GetText(true)), 1, false)
-	}
+	layout := tview.NewFlex()
+	statsFrame := tview.NewFlex().SetDirection(tview.FlexRow)
+	statsFrame.SetBorder(true).SetBorderPadding(1, 1, 1, 1)
 	for _, statsWi := range statsWis {
-		flexTexts.AddItem(statsWi, len(statsWi.GetText(true))+5, 1, false)
+		statsFrame.AddItem(statsWi, 1, 1, false)
 	}
-	flexTexts.AddItem(inputWi, 0, 1, true)
+	layout.AddItem(statsFrame, 0, 1, false)
 
-	pages.AddPage("game", flexTexts, true, true).SendToBack("game")
+	secondColumn := tview.NewFlex().SetDirection(tview.FlexRow)
+	textsLayout := tview.NewFlex()
+	for _, textWi := range textWis {
+		textsLayout.AddItem(textWi, len(textWi.GetText(true)), 1, false)
+	}
+	textsLayout.SetBorder(true)
+	secondColumn.AddItem(textsLayout, 0, 3, false)
+	inputWi.SetBorder(true)
+	secondColumn.AddItem(inputWi, 0, 1, true)
+	layout.AddItem(secondColumn, 0, 3, true)
+
+	pages.AddPage("game", layout, true, true).SendToBack("game")
 	app.SetRoot(pages, true)
 
 	keybindings(app, CreateWelcome)
