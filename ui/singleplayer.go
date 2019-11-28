@@ -2,152 +2,145 @@ package ui
 
 import (
 	"fmt"
-	"strconv"
 	"time"
 
-	"github.com/jroimartin/gocui"
-	widgets "github.com/shilangyu/gocui-widgets"
+	"github.com/gdamore/tcell"
+	"github.com/rivo/tview"
 	"github.com/shilangyu/typer-go/game"
+	"github.com/shilangyu/typer-go/settings"
 )
 
 // CreateSingleplayer creates singleplayer screen widgets
-func CreateSingleplayer(g *gocui.Gui) error {
+func CreateSingleplayer(app *tview.Application) error {
 	text, err := game.ChooseText()
 	if err != nil {
 		return err
 	}
 	state := game.NewState(text)
 
-	w, h := g.Size()
-
-	statsFrameWi := widgets.NewCollection("singleplayer-stats", "STATS", false, 0, 0, w/5, h)
-
-	statWis := []*widgets.Text{
-		widgets.NewText("singleplayer-stats-wpm", "wpm: 0  ", false, false, 2, 1),
-		widgets.NewText("singleplayer-stats-time", "time: 0s  ", false, false, 2, 2),
+	statsWis := [...]*tview.TextView{
+		tview.NewTextView().SetText("wpm: 0"),
+		tview.NewTextView().SetText("time: 0s"),
 	}
 
-	textFrameWi := widgets.NewCollection("singleplayer-text", "", false, w/5+1, 0, 4*w/5, 5*h/6+1)
-
-	points := organiseText(state.Words, 4*w/5-2)
-	var textWis []*widgets.Text
-	for i, p := range points {
-		textWis = append(textWis, widgets.NewText("singleplayer-text-"+strconv.Itoa(i), state.Words[i], false, false, w/5+1+p.x, p.y))
-	}
-
-	var inputWi *widgets.Input
-	inputWi = widgets.NewInput("singleplayer-input", true, false, w/5+1, h-h/6, w-w/5-1, h/6, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
-		if key == gocui.KeyEnter || len(v.Buffer()) == 0 && ch == 0 {
-			return false
-		}
-
-		if state.StartTime.IsZero() {
-			state.Start()
-			go func() {
-				ticker := time.NewTicker(100 * time.Millisecond)
-				for range ticker.C {
-					if state.CurrWord == len(state.Words) {
-						ticker.Stop()
-						return
-					}
-
-					g.Update(func(g *gocui.Gui) error {
-						err := statWis[1].ChangeText(
-							fmt.Sprintf("time: %.02fs", time.Since(state.StartTime).Seconds()),
-						)(g)
-						if err != nil {
-							return err
-						}
-
-						err = statWis[0].ChangeText(
-							fmt.Sprintf("wpm: %.0f", state.Wpm()),
-						)(g)
-						if err != nil {
-							return err
-						}
-
-						return nil
-					})
+	pages := tview.NewPages().
+		AddPage("modal", tview.NewModal().
+			SetText("Play again?").
+			AddButtons([]string{"yes", "exit"}).
+			SetDoneFunc(func(index int, label string) {
+				switch index {
+				case 0:
+					CreateSingleplayer(app)
+				case 1:
+					CreateWelcome(app)
 				}
-			}()
-		}
+			}), false, false)
 
-		gocui.DefaultEditor.Edit(v, key, ch, mod)
+	var textWis []*tview.TextView
+	for _, word := range state.Words {
+		textWis = append(textWis, tview.NewTextView().SetText(word).SetDynamicColors(true))
+	}
 
-		b := v.Buffer()[:len(v.Buffer())-1]
-
-		if ch != 0 && (len(b) > len(state.Words[state.CurrWord]) || rune(state.Words[state.CurrWord][len(b)-1]) != ch) {
-			state.IncError()
-		}
-
-		ansiWord := state.PaintDiff(b)
-
-		g.Update(textWis[state.CurrWord].ChangeText(ansiWord))
-
-		if b == state.Words[state.CurrWord] {
-			state.NextWord()
-			if state.CurrWord == len(state.Words) {
-				state.End()
-
-				var popupWi *widgets.Modal
-				popupWi = widgets.NewModal("singleplayer-popup", "The end of the end\n is the end of times who craes", []string{"play", "quit"}, true, w/2, h/2, func(i int) {
-					popupWi.Layout(g)
-				}, func(i int) {
-					switch i {
-					case 0:
-						CreateSingleplayer(g)
-					case 1:
-						CreateWelcome(g)
+	currInput := ""
+	inputWi := tview.NewInputField().
+		SetFieldBackgroundColor(tcell.ColorDefault)
+	inputWi.
+		SetChangedFunc(func(text string) {
+			if state.StartTime.IsZero() {
+				state.Start()
+				go func() {
+					ticker := time.NewTicker(100 * time.Millisecond)
+					for range ticker.C {
+						if state.CurrWord == len(state.Words) {
+							ticker.Stop()
+							return
+						}
+						app.QueueUpdateDraw(func() {
+							statsWis[0].SetText(fmt.Sprintf("wpm: %.0f", state.Wpm()))
+							statsWis[1].SetText(fmt.Sprintf("time: %.02fs", time.Since(state.StartTime).Seconds()))
+						})
 					}
-				})
-				g.Update(func(g *gocui.Gui) error {
-					popupWi.Layout(g)
-					popupWi.Layout(g)
-					g.SetCurrentView("singleplayer-popup")
-					g.SetViewOnTop("singleplayer-popup")
-					return nil
-				})
-
+				}()
 			}
-			g.Update(inputWi.ChangeText(""))
-		}
 
-		return false
-	})
+			if len(currInput) < len(text) {
+				if len(text) > len(state.Words[state.CurrWord]) || state.Words[state.CurrWord][len(text)-1] != text[len(text)-1] {
+					state.IncError()
+				}
+			}
 
-	var wis []gocui.Manager
-	wis = append(wis, statsFrameWi)
-	for _, stat := range statWis {
-		wis = append(wis, stat)
+			app.QueueUpdateDraw(func(i int) func() {
+				return func() {
+					textWis[i].SetText(paintDiff(state.Words[i], text))
+				}
+			}(state.CurrWord))
+
+			if text == state.Words[state.CurrWord] {
+				state.NextWord()
+				if state.CurrWord == len(state.Words) {
+					state.End()
+					pages.ShowPage("modal")
+				} else {
+					inputWi.SetText("")
+				}
+			}
+
+			currInput = text
+		})
+
+	layout := tview.NewFlex()
+	statsFrame := tview.NewFlex().SetDirection(tview.FlexRow)
+	statsFrame.SetBorder(true).SetBorderPadding(1, 1, 1, 1)
+	for _, statsWi := range statsWis {
+		statsFrame.AddItem(statsWi, 1, 1, false)
 	}
-	wis = append(wis, textFrameWi)
-	for _, text := range textWis {
-		wis = append(wis, text)
+	layout.AddItem(statsFrame, 0, 1, false)
+
+	secondColumn := tview.NewFlex().SetDirection(tview.FlexRow)
+	textsLayout := tview.NewFlex()
+	for _, textWi := range textWis {
+		textsLayout.AddItem(textWi, len(textWi.GetText(true)), 1, false)
 	}
-	wis = append(wis, inputWi)
+	textsLayout.SetBorder(true)
+	secondColumn.AddItem(textsLayout, 0, 3, false)
+	inputWi.SetBorder(true)
+	secondColumn.AddItem(inputWi, 0, 1, true)
+	layout.AddItem(secondColumn, 0, 3, true)
 
-	g.SetManager(wis...)
+	pages.AddPage("game", layout, true, true).SendToBack("game")
+	app.SetRoot(pages, true)
 
-	g.Update(func(*gocui.Gui) error {
-		g.SetCurrentView("singleplayer-input")
-		return nil
-	})
-
-	return keybindings(g, CreateWelcome)
+	keybindings(app, CreateWelcome)
+	return nil
 }
 
-// takes a slice of words and length of a line
-// returns xs and ys of the words on a plane
-func organiseText(words []string, lineLength int) (points []struct{ x, y int }) {
-	x, y := 0, 0
+// paintDiff returns an tview-painted string displaying the difference
+func paintDiff(toColor string, differ string) (colorText string) {
+	var h string
+	if settings.I.Highlight == settings.HighlightBackground {
+		h = ":"
+	}
 
-	for _, word := range words {
-		if x+len(word) > lineLength {
-			y++
-			x = 0
+	for i := range differ {
+		if i >= len(toColor) || differ[i] != toColor[i] {
+			colorText += "[" + h + "red]"
+		} else {
+			colorText += "[" + h + "green]"
 		}
-		points = append(points, struct{ x, y int }{x, y})
-		x += len(word)
+
+		switch settings.I.ErrorDisplay {
+		case settings.ErrorDisplayTyped:
+			colorText += string(differ[i])
+		case settings.ErrorDisplayText:
+			if i < len(toColor) {
+				colorText += string(toColor[i])
+			}
+		}
+	}
+	colorText += "[-:-:-]"
+
+	if len(differ) < len(toColor) {
+		colorText += toColor[len(differ):]
 	}
 
 	return

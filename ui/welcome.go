@@ -1,56 +1,43 @@
 package ui
 
 import (
-	"os"
-
-	"github.com/common-nighthawk/go-figure"
-	"github.com/jroimartin/gocui"
-	widgets "github.com/shilangyu/gocui-widgets"
+	"github.com/rivo/tview"
 	"github.com/shilangyu/typer-go/utils"
 )
 
 // CreateWelcome creates welcome screen widgets
-func CreateWelcome(g *gocui.Gui) error {
-	w, h := g.Size()
-	g.Mouse = true
-	g.Cursor = false
-	g.Highlight = true
-	g.SelFgColor = gocui.ColorGreen
+func CreateWelcome(app *tview.Application) error {
+	const welcomeSign = `
+ _                                          
+| |_ _   _ _ __   ___ _ __       __ _  ___  
+| __| | | | '_ \ / _ \ '__|____ / _  |/ _ \ 
+| |_| |_| | |_) |  __/ | |_____| (_| | (_) |
+ \__|\__, | .__/ \___|_|        \__, |\___/ 
+     |___/|_|                   |___/       
+`
+	signWi := tview.NewTextView().SetText(welcomeSign)
+	menuWi := tview.NewList().
+		AddItem("single player", "test your typing skills offline!", 0, func() {
+			utils.Check(CreateSingleplayer(app))
+		}).
+		AddItem("multi player", "battle against other typers", 0, nil).
+		AddItem("stats", "TO BE RELEASED", 0, nil).
+		AddItem("settings", "change app settings", 0, func() {
+			utils.Check(CreateSettings(app))
+		}).
+		AddItem("exit", "exit the app", 0, func() {
+			app.Stop()
+		})
 
-	signWi := widgets.NewText("welcome-sign", figure.NewFigure("typer-go", "", false).String(), false, true, w/2, h/5)
+	signW, signH := utils.StringDimensions(welcomeSign)
+	menuW, menuH := 32, menuWi.GetItemCount()*2
+	layout := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(tview.NewBox(), 0, 1, false).
+		AddItem(Center(signW, signH, signWi), 0, 1, false).
+		AddItem(Center(menuW, menuH, menuWi), 0, 1, true).
+		AddItem(tview.NewBox(), 0, 1, false)
 
-	infoItems := utils.Center([]string{
-		"Single player mode - test your typing skills offline!",
-		"Multi player mode - battle against other typers",
-		"TO BE RELEASED", //"Stats - View your statistics",
-		"Settings - change app settings",
-		"Exit - exit the app",
-	})
-	infoWi := widgets.NewText("welcome-menu-info", infoItems[0], true, true, w/2, 3*h/4)
-
-	menuItems := utils.Center([]string{"single player", "multi player", "stats", "settings", "exit"})
-	menuWi := widgets.NewMenu("welcome-main-menu", menuItems, true, w/2, h/2, func(i int) {
-		g.Update(infoWi.ChangeText(infoItems[i]))
-	}, func(i int) {
-		switch i {
-		case 0:
-			utils.Check(CreateSingleplayer(g))
-		case 1:
-			utils.Check(CreateMultiplayerSetup(g))
-		case 3:
-			utils.Check(CreateSettings(g))
-		case 4:
-			g.Close()
-			os.Exit(0)
-		}
-	})
-
-	g.SetManager(signWi, menuWi, infoWi)
-
-	g.Update(func(*gocui.Gui) error {
-		g.SetCurrentView("welcome-main-menu")
-		return nil
-	})
-
-	return keybindings(g, nil)
+	app.SetRoot(layout, true)
+	return nil
 }

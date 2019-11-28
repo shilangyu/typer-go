@@ -92,7 +92,7 @@ func CreateMultiplayerSetup(g *gocui.Gui) error {
 		return nil
 	})
 
-	return keybindings(g, CreateWelcome)
+	return nil //keybindings(g, CreateMultiplayer)
 }
 
 // CreateMultiplayerRoom creates a room for multiplayer
@@ -157,7 +157,7 @@ func CreateMultiplayerRoom(g *gocui.Gui) error {
 		return err
 	})
 
-	return keybindings(g, CreateMultiplayerSetup)
+	return nil //keybindings(g, CreateMultiplayerSetup)
 }
 
 // CreateMultiplayer creates multiplayer screen widgets
@@ -187,7 +187,7 @@ func CreateMultiplayer(g *gocui.Gui) error {
 
 	textFrameWi := widgets.NewCollection("multiplayer-text", "", false, w/5+1, 0, 4*w/5, 5*h/6+1)
 
-	points := organiseText(state.Words, 4*w/5-2)
+	points := []struct{ x, y int }{}
 	var textWis []*widgets.Text
 	for i, p := range points {
 		textWis = append(textWis, widgets.NewText("multiplayer-text-"+strconv.Itoa(i), state.Words[i], false, false, w/5+1+p.x, p.y))
@@ -243,9 +243,9 @@ func CreateMultiplayer(g *gocui.Gui) error {
 			state.IncError()
 		}
 
-		ansiWord := state.PaintDiff(b)
+		// ansiWord := state.PaintDiff(b)
 
-		g.Update(textWis[state.CurrWord].ChangeText(ansiWord))
+		// g.Update(textWis[state.CurrWord].ChangeText(ansiWord))
 
 		if b == state.Words[state.CurrWord] {
 			state.NextWord()
@@ -259,9 +259,9 @@ func CreateMultiplayer(g *gocui.Gui) error {
 				}, func(i int) {
 					switch i {
 					case 0:
-						CreateSingleplayer(g)
+						// CreateSingleplayer(g)
 					case 1:
-						CreateWelcome(g)
+						// CreateWelcome(g)
 					}
 				})
 				g.Update(func(g *gocui.Gui) error {
@@ -298,7 +298,7 @@ func CreateMultiplayer(g *gocui.Gui) error {
 		return nil
 	})
 
-	return keybindings(g, CreateMultiplayerSetup)
+	return nil //keybindings(g, CreateMultiplayerSetup)
 }
 
 func createServer() (*net.Listener, error) {
