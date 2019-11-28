@@ -18,22 +18,16 @@ func CreateWelcome(app *tview.Application) error {
 	signWi := tview.NewTextView().SetText(welcomeSign)
 	menuWi := tview.NewList().
 		AddItem("single player", "test your typing skills offline!", 0, func() {
-			err := CreateSingleplayer(app)
-			utils.Check(err)
+			utils.Check(CreateSingleplayer(app))
 		}).
 		AddItem("multi player", "battle against other typers", 0, nil).
 		AddItem("stats", "TO BE RELEASED", 0, nil).
 		AddItem("settings", "change app settings", 0, func() {
-			err := CreateSettings(app)
-			utils.Check(err)
+			utils.Check(CreateSettings(app))
 		}).
 		AddItem("exit", "exit the app", 0, func() {
 			app.Stop()
 		})
-	// switch i {
-	// case 1:
-	// 	utils.Check(CreateMultiplayerSetup(g))
-	// }
 
 	signW, signH := utils.StringDimensions(welcomeSign)
 	menuW, menuH := 32, menuWi.GetItemCount()*2

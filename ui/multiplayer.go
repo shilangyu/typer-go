@@ -178,7 +178,7 @@ func CreateMultiplayer(g *gocui.Gui) error {
 
 	textFrameWi := widgets.NewCollection("multiplayer-text", "", false, w/5+1, 0, 4*w/5, 5*h/6+1)
 
-	points := organiseText(state.Words, 4*w/5-2)
+	points := []struct{ x, y int }{}
 	var textWis []*widgets.Text
 	for i, p := range points {
 		textWis = append(textWis, widgets.NewText("multiplayer-text-"+strconv.Itoa(i), state.Words[i], false, false, w/5+1+p.x, p.y))

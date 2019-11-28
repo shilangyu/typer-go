@@ -114,23 +114,6 @@ func CreateSingleplayer(app *tview.Application) error {
 	return nil
 }
 
-// takes a slice of words and length of a line
-// returns xs and ys of the words on a plane
-func organiseText(words []string, lineLength int) (points []struct{ x, y int }) {
-	x, y := 0, 0
-
-	for _, word := range words {
-		if x+len(word) > lineLength {
-			y++
-			x = 0
-		}
-		points = append(points, struct{ x, y int }{x, y})
-		x += len(word)
-	}
-
-	return
-}
-
 // paintDiff returns an tview-painted string displaying the difference
 func paintDiff(toColor string, differ string) (colorText string) {
 	var h string

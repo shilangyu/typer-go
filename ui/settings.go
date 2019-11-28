@@ -3,6 +3,7 @@ package ui
 import (
 	"github.com/rivo/tview"
 	"github.com/shilangyu/typer-go/settings"
+	"github.com/shilangyu/typer-go/utils"
 )
 
 // CreateSettings creates a screen with settings
@@ -33,13 +34,8 @@ func CreateSettings(app *tview.Application) error {
 				settings.I.TextsPath = text
 				settings.Save()
 			}).
-		AddButton("OK", func() { CreateWelcome(app) })
+		AddButton("DONE", func() { utils.Check(CreateWelcome(app)) })
 
-		// infoItems := utils.Center([]string{
-		// 	"How your text should be highlighted",
-		// 	"What part should be displayed when you type an error",
-		// 	"Path to your typer texts (separated with a new line)",
-		// })
 	layout := tview.NewFlex().AddItem(Center(34, 10, settingsWi), 0, 1, true)
 
 	app.SetRoot(layout, true)

@@ -3,6 +3,7 @@ package ui
 import (
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
+	"github.com/shilangyu/typer-go/utils"
 )
 
 func keybindings(app *tview.Application, goBack func(app *tview.Application) error) {
@@ -10,7 +11,7 @@ func keybindings(app *tview.Application, goBack func(app *tview.Application) err
 		app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 			if event.Key() == tcell.KeyEsc {
 				app.QueueUpdateDraw(func() {
-					goBack(app)
+					utils.Check(goBack(app))
 				})
 			}
 
