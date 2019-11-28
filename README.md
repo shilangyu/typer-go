@@ -23,15 +23,16 @@ You should first head to the settings and set a path to texts.
 
 ### navigation
 
-The whole TUI has mouse support!
+~~The whole TUI has mouse support!~~
 
-| key               | description          |
-| ----------------- | -------------------- |
-| <kbd>↑</kbd>      | menu navigation up   |
-| <kbd>↓</kbd>      | menu navigation down |
-| <kbd>enter</kbd>  | confirm              |
-| <kbd>ctrl+q</kbd> | back                 |
-| <kbd>ctrl+c</kbd> | exit                 |
+| key               | description                |
+| ----------------- | -------------------------- |
+| <kbd>↑</kbd>      | menu navigation up         |
+| <kbd>↓</kbd>      | menu navigation down       |
+| <kbd>enter</kbd>  | confirm                    |
+| <kbd>esc</kbd>    | back                       |
+| <kbd>tab</kbd>    | switch focus (if possible) |
+| <kbd>ctrl+c</kbd> | exit                       |
 
 ### Alternatives
 
