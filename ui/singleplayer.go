@@ -26,6 +26,7 @@ func CreateSingleplayer(app *tview.Application) error {
 	pages := tview.NewPages().
 		AddPage("modal", tview.NewModal().
 			SetText("Play again?").
+			SetBackgroundColor(tcell.ColorDefault).
 			AddButtons([]string{"yes", "exit"}).
 			SetDoneFunc(func(index int, label string) {
 				switch index {
@@ -90,7 +91,7 @@ func CreateSingleplayer(app *tview.Application) error {
 
 	layout := tview.NewFlex()
 	statsFrame := tview.NewFlex().SetDirection(tview.FlexRow)
-	statsFrame.SetBorder(true).SetBorderPadding(1, 1, 1, 1)
+	statsFrame.SetBorder(true).SetBorderPadding(1, 1, 1, 1).SetTitle("STATS")
 	for _, statsWi := range statsWis {
 		statsFrame.AddItem(statsWi, 1, 1, false)
 	}
