@@ -29,7 +29,7 @@ func split(s string) (string, string) {
 }
 
 // ExtractChangeName takes a payload and gives extracted data
-func ExtractChangeName(payload string) (ID, username string) {
+func ExtractChangeName(payload string) (ID, nickname string) {
 	return split(payload)
 }
 

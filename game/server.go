@@ -2,22 +2,26 @@ package game
 
 import (
 	"github.com/kanopeld/go-socket"
-	"github.com/shilangyu/typer-go/utils"
 )
 
 // NewServer initializes a server that just broadcasts all events
-func NewServer(port string) *socket.Server {
+func NewServer(port string) (*socket.Server, error) {
 	s, err := socket.NewServer(":" + port)
-	utils.Check(err)
+	if err != nil {
+		return nil, err
+	}
+	players := make(Players)
 
 	s.On(socket.CONNECTION_NAME, func(c socket.Client) {
-		for _, eventName := range Events {
-			func(evtName string) {
-				c.On(evtName, func(data []byte) {
-					c.Broadcast(evtName, data)
-				})
-			}(eventName)
-		}
+		c.On(ChangeName, func(data []byte) {
+			ID, nickname := ExtractChangeName(string(data))
+			players.Add(ID, nickname)
+			c.Broadcast(ChangeName, data)
+
+			for ID, p := range players {
+				c.Emit(ChangeName, ID+":"+p.Nickname)
+			}
+		})
 
 		c.On(socket.DISCONNECTION_NAME, func() {
 			c.Broadcast(ExitPlayer, []byte(c.ID()))
@@ -26,5 +30,5 @@ func NewServer(port string) *socket.Server {
 
 	go s.Start()
 
-	return s
+	return s, nil
 }

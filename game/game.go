@@ -27,3 +27,22 @@ func ChooseText() (string, error) {
 
 	return texts[rand.Intn(len(texts))], nil
 }
+
+// Player holds information about an outer player
+type Player struct {
+	// Nickname
+	Nickname string
+	// Progress
+	Progress int
+}
+
+// Players is a helper for other players
+type Players map[string]*Player
+
+// Add adds or edits a player to the map
+func (p *Players) Add(ID, nickname string) {
+	if _, ok := (*p)[ID]; !ok {
+		(*p)[ID] = &Player{}
+	}
+	(*p)[ID].Nickname = nickname
+}
