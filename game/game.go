@@ -27,29 +27,3 @@ func ChooseText() (string, error) {
 
 	return texts[rand.Intn(len(texts))], nil
 }
-
-// MessageType defines available commands
-type MessageType string
-
-const (
-	// ChangeName is for changing usernames
-	// payload = new username
-	ChangeName MessageType = "change-name"
-	// ExitPlayer is for players leaving the game
-	// payload = nil
-	ExitPlayer MessageType = "exit-player"
-	// StartGame is for starting the game
-	// payload = unix timestamp of when it starts
-	StartGame MessageType = "start-game"
-)
-
-// Parse returns message type and message itself from a connection
-func Parse(payload string) (MessageType, string) {
-	s := strings.Split(payload[:len(payload)-1], ":")
-	return MessageType(s[0]), strings.Join(s[1:], ":")
-}
-
-// Compose creates a data string for connections
-func Compose(t MessageType, payload string) []byte {
-	return []byte(string(t) + ":" + payload + "\n")
-}
