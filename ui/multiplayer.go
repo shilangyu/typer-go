@@ -7,10 +7,48 @@ import (
 	"github.com/shilangyu/typer-go/utils"
 )
 
+type setup struct {
+	RoomIP, Nickname, Port string
+	IsServer               bool
+	// Server will be nil if IsServer is false
+	Server *socket.Server
+	Client socket.Client
+}
+
+// CreateMultiplayerSetup creates multiplayer room
+func CreateMultiplayerSetup(app *tview.Application) error {
+	IP, _ := utils.IPv4()
+	setup := setup{IP, "", "9001", true, nil, nil}
+
+	formWi := tview.NewForm().
+		AddInputField("Room IP", setup.RoomIP, 20, nil, func(text string) { setup.RoomIP = text }).
+		AddInputField("Port", setup.Port, 20, nil, func(text string) { setup.Port = text }).
+		AddCheckbox("Server", setup.IsServer, func(checked bool) { setup.IsServer = checked }).
+		AddButton("CONNECT", func() {
+			if setup.IsServer {
+				var err error
+				setup.Server, err = game.NewServer(setup.Port)
+				utils.Check(err)
+			}
+
+			c, err := socket.NewDial(setup.RoomIP + ":" + setup.Port)
+			utils.Check(err)
+			setup.Client = c
+
+			utils.Check(CreateMultiplayerRoom(app, setup))
+		}).
+		AddButton("CANCEL", func() {
+			utils.Check(CreateWelcome(app))
+		})
+
+	app.SetRoot(Center(28, 11, formWi), true)
+	keybindings(app, CreateWelcome)
+	return nil
+}
+
 // CreateMultiplayerRoom creates multiplayer room
-func CreateMultiplayerRoom(app *tview.Application) error {
+func CreateMultiplayerRoom(app *tview.Application, setup setup) error {
 	players := make(game.Players)
-	var client socket.Client
 
 	roomWi := tview.NewTextView()
 	roomWi.SetBorder(true).SetTitle("ROOM")
@@ -24,39 +62,30 @@ func CreateMultiplayerRoom(app *tview.Application) error {
 		})
 	}
 
-	roomIP := utils.IPv4()
-	nickname := ""
-	port := "9001"
-	server := true
+	setup.Client.On(socket.CONNECTION_NAME, func(ccc socket.Client) {
+		setup.Client.On(game.ChangeName, func(payload string) {
+			ID, nickname := game.ExtractChangeName(payload)
+			players.Add(ID, nickname)
+			renderRoom()
+		})
+		setup.Client.On(game.ExitPlayer, func(payload string) {
+			ID := game.ExtractExitPlayer(payload)
+			delete(players, ID)
+			renderRoom()
+		})
+		setup.Client.Emit(game.ChangeName, setup.Client.ID()+":"+setup.Nickname)
+		players[setup.Client.ID()] = &game.Player{Nickname: setup.Nickname}
+		renderRoom()
+	})
 
 	formWi := tview.NewForm().
-		AddInputField("Room IP", roomIP, 20, nil, func(text string) { roomIP = text }).
-		AddInputField("Port", port, 20, nil, func(text string) { port = text }).
-		AddCheckbox("Server", server, func(checked bool) { server = checked }).
-		AddInputField("Nickname", nickname, 20, nil, func(text string) { nickname = text }).
-		AddButton("CONNECT", func() {
-			if server {
-				_, err := game.NewServer(port)
-				utils.Check(err)
-			}
-
-			c, err := socket.NewDial(roomIP + ":" + port)
-			utils.Check(err)
-			client = c
-			client.On(socket.CONNECTION_NAME, func(ccc socket.Client) {
-				client.On(game.ChangeName, func(payload string) {
-					ID, nickname := game.ExtractChangeName(payload)
-
-					players.Add(ID, nickname)
-					renderRoom()
-				})
-				client.Emit(game.ChangeName, client.ID()+":"+nickname)
-				players[client.ID()] = &game.Player{Nickname: nickname}
-				renderRoom()
-			})
+		AddInputField("Nickname", setup.Nickname, 20, nil, func(text string) {
+			setup.Nickname = text
+			players[setup.Client.ID()].Nickname = setup.Nickname
+			setup.Client.Emit(game.ChangeName, setup.Client.ID()+":"+setup.Nickname)
 		}).
-		AddButton("CANCEL", func() {
-			utils.Check(CreateWelcome(app))
+		AddButton("BACK", func() {
+			utils.Check(CreateMultiplayerSetup(app))
 		})
 
 	layout := tview.NewFlex().
@@ -69,151 +98,13 @@ func CreateMultiplayerRoom(app *tview.Application) error {
 		AddItem(tview.NewBox(), 0, 1, false)
 
 	app.SetRoot(layout, true)
-	keybindings(app, CreateWelcome)
+	keybindings(app, func(app *tview.Application) error {
+		setup.Client.Emit(game.ExitPlayer, setup.Client.ID())
+		return CreateMultiplayerSetup(app)
+	})
+
 	return nil
 }
-
-// var srv *game.Server
-// var clt *game.Client
-
-// // CreateMultiplayerSetup creates multiplayer room creation
-// func CreateMultiplayerSetup(g *gocui.Gui) error {
-// 	w, h := g.Size()
-
-// 	errorWi := widgets.NewText("mp-setup-error", strings.Repeat(" ", 59), false, true, w/2, h/4)
-
-// 	infoItems := utils.Center([]string{"Be the host a type race - let your friends know your ip", "Join a room - enter the ip of the host"})
-// 	infoWi := widgets.NewText("mp-setup-menu-info", infoItems[0], true, true, w/2, 3*h/4)
-
-// 	menuItems := utils.Center([]string{"server", "client"})
-// 	menuWi := widgets.NewMenu("mp-setup-menu", menuItems, true, w/4, h/2, func(i int) {
-// 		g.Update(infoWi.ChangeText(infoItems[i]))
-// 	}, func(i int) {
-// 		switch i {
-// 		case 0:
-// 			srv = &game.Server{}
-
-// 			createWi := widgets.NewText("mp-setup-create", strings.Repeat(" ", w/4-3), true, true, 3*w/4+1, h/2)
-// 			createWi.Layout(g)
-// 			g.SetCurrentView("mp-setup-create")
-
-// 			g.Update(createWi.ChangeText("Creating a room..."))
-
-// 			tempServer, err := net.Listen("tcp", utils.IPv4()+":"+tcpPort)
-
-// 			if err != nil {
-// 				g.Update(func(g *gocui.Gui) error {
-// 					errorWi.ChangeText("\u001b[31mCould not create a server. Make sure the port 9001 is free.")(g)
-// 					g.SetCurrentView("mp-setup-menu")
-// 					return g.DeleteView("mp-setup-create")
-// 				})
-// 			} else {
-// 				g.DeleteKeybindings("mp-setup-menu")
-
-// 				srv.Server = tempServer
-// 				CreateMultiplayerRoom(g)
-// 			}
-
-// 		case 1:
-// 			clt = &game.Client{}
-
-// 			ipInputWi := widgets.NewInput("mp-setup-join", true, true, 3*w/4, h/2, w/4, 3, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
-// 				if key == gocui.KeyEnter {
-// 					IP := v.Buffer()[:len(v.Buffer())-1]
-// 					tempConn, err := net.Dial("tcp", IP+":"+tcpPort)
-// 					if err != nil {
-// 						g.Update(func(g *gocui.Gui) error {
-// 							errorWi.ChangeText("\u001b[31mCould not join the room. Please check your/servers firewall.")(g)
-// 							g.SetCurrentView("mp-setup-menu")
-// 							return g.DeleteView("mp-setup-join")
-// 						})
-// 					} else {
-// 						clt.Conn = tempConn
-// 						CreateMultiplayerRoom(g)
-// 					}
-// 					return false
-// 				}
-// 				return !(len(v.Buffer()) == 0 && ch == 0)
-// 			})
-// 			ipInputWi.Layout(g)
-// 			g.SetCurrentView("mp-setup-join")
-// 		}
-// 	})
-
-// 	g.SetManager(infoWi, menuWi, errorWi)
-// 	g.Update(func(*gocui.Gui) error {
-// 		g.SetCurrentView("mp-setup-menu")
-// 		menuWi.Layout(g)
-// 		return nil
-// 	})
-
-// 	return nil //keybindings(g, CreateMultiplayer)
-// }
-
-// // CreateMultiplayerRoom creates a room for multiplayer
-// func CreateMultiplayerRoom(g *gocui.Gui) error {
-// 	w, h := g.Size()
-
-// 	IPWi := widgets.NewText("mp-room-ip", utils.IPv4(), true, true, w/2, h/6)
-// 	playerListWi := widgets.NewText("mp-room-list", strings.Repeat(strings.Repeat(" ", w/2)+"\n", h/3), true, true, w/2, 3*h/5)
-
-// 	update := func() {
-// 		s := srv.Name + "\n"
-// 		for _, client := range srv.Others {
-// 			s += client.Name + "\n"
-// 		}
-// 		g.Update(playerListWi.ChangeText(s))
-// 	}
-
-// 	inputWi := widgets.NewInput("mp-room-input", true, true, w/2, h/4, w/2, 3, func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
-// 		if len(v.Buffer()) == 0 && ch == 0 {
-// 			return false
-// 		}
-
-// 		if key == gocui.KeyEnter {
-// 			if srv != nil {
-// 				srv.StartGame()
-// 				CreateMultiplayer(g)
-// 			}
-// 			return false
-// 		}
-
-// 		gocui.DefaultEditor.Edit(v, key, ch, mod)
-
-// 		if srv != nil {
-// 			srv.Name = v.Buffer()[:len(v.Buffer())-1]
-// 			update()
-// 		} else {
-// 			clt.ConfirmUsername(v.Buffer()[:len(v.Buffer())-1])
-// 		}
-
-// 		return false
-// 	})
-
-// 	if srv != nil {
-// 		go srv.Accept()
-// 		srv.Subscribe(func(t game.MessageType) {
-// 			switch t {
-// 			case game.ChangeName:
-// 				fallthrough
-// 			case game.ExitPlayer:
-// 				update()
-// 			}
-// 		})
-// 	} else {
-// 		go clt.Listen()
-// 	}
-
-// 	g.SetManager(inputWi, IPWi, playerListWi)
-// 	g.Update(func(*gocui.Gui) error {
-// 		inputWi.Layout(g)
-// 		v, err := g.SetCurrentView("mp-room-input")
-// 		v.Title = "username"
-// 		return err
-// 	})
-
-// 	return nil //keybindings(g, CreateMultiplayerSetup)
-// }
 
 // // CreateMultiplayer creates multiplayer screen widgets
 // func CreateMultiplayer(g *gocui.Gui) error {
@@ -354,47 +245,4 @@ func CreateMultiplayerRoom(app *tview.Application) error {
 // 	})
 
 // 	return nil //keybindings(g, CreateMultiplayerSetup)
-// }
-
-// func createServer() (*net.Listener, error) {
-// 	conn, err := net.Dial("udp", "8.8.8.8:80")
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	localAddr := conn.LocalAddr().(*net.UDPAddr)
-// 	ip := localAddr.IP
-// 	conn.Close()
-
-// 	listener, err := net.Listen("tcp", ip.String()+":9001")
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	for {
-// 		// Listen for an incoming connection.
-// 		conn, err := listener.Accept()
-// 		if err != nil {
-// 			fmt.Println("Error accepting: ", err.Error())
-// 			os.Exit(1)
-// 		}
-// 		fmt.Println("someone connected")
-// 		// Handle connections in a new goroutine.
-// 		go func(conn net.Conn) {
-// 			reader := bufio.NewReader(conn)
-
-// 			for {
-// 				message, err := reader.ReadString('\n')
-// 				if err != nil {
-// 					fmt.Println("someone disconnected")
-// 					conn.Close()
-// 					return
-// 				}
-
-// 				fmt.Print("|" + strings.TrimSpace(message) + "|")
-// 				// Send a response back to person contacting us.
-// 				conn.Write([]byte("STOP\n"))
-// 			}
-// 		}(conn)
-// 	}
-
 // }

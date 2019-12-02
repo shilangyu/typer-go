@@ -21,7 +21,7 @@ func CreateWelcome(app *tview.Application) error {
 			utils.Check(CreateSingleplayer(app))
 		}).
 		AddItem("multi player", "battle against other typers", 0, func() {
-			utils.Check(CreateMultiplayerRoom(app))
+			utils.Check(CreateMultiplayerSetup(app))
 		}).
 		AddItem("stats", "TO BE RELEASED", 0, nil).
 		AddItem("settings", "change app settings", 0, func() {

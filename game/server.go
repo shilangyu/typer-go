@@ -23,9 +23,12 @@ func NewServer(port string) (*socket.Server, error) {
 			}
 		})
 
-		c.On(socket.DISCONNECTION_NAME, func() {
+		onExit := func() {
+			delete(players, c.ID())
 			c.Broadcast(ExitPlayer, []byte(c.ID()))
-		})
+		}
+		c.On(socket.DISCONNECTION_NAME, onExit)
+		c.On(ExitPlayer, onExit)
 	})
 
 	go s.Start()
