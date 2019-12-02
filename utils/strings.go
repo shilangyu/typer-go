@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"net"
 	"strings"
 )
@@ -34,10 +35,13 @@ func Center(s []string) (res []string) {
 }
 
 // IPv4 returns users ipv4 as a string
-func IPv4() string {
-	conn, _ := net.Dial("udp", "8.8.8.8:80")
+func IPv4() (string, error) {
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err != nil {
+		return "", errors.New("Failed to determine your IP")
+	}
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 	myIP := localAddr.IP.String()
 	conn.Close()
-	return myIP
+	return myIP, nil
 }
