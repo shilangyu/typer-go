@@ -48,6 +48,8 @@ func CreateMultiplayerSetup(app *tview.Application) error {
 
 // CreateMultiplayerRoom creates multiplayer room
 func CreateMultiplayerRoom(app *tview.Application, setup setup) error {
+	const maxNicknameLength int = 10
+
 	players := make(game.Players)
 
 	roomWi := tview.NewTextView()
@@ -79,7 +81,9 @@ func CreateMultiplayerRoom(app *tview.Application, setup setup) error {
 	})
 
 	formWi := tview.NewForm().
-		AddInputField("Nickname", setup.Nickname, 20, nil, func(text string) {
+		AddInputField("Nickname", setup.Nickname, 20, func(textToCheck string, lastChar rune) bool {
+			return len(textToCheck) <= maxNicknameLength
+		}, func(text string) {
 			setup.Nickname = text
 			players[setup.Client.ID()].Nickname = setup.Nickname
 			setup.Client.Emit(game.ChangeName, setup.Client.ID()+":"+setup.Nickname)
