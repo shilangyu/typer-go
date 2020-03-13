@@ -130,9 +130,9 @@ func paintDiff(toColor string, differ string) (colorText string) {
 		}
 
 		switch settings.I.ErrorDisplay {
-		case settings.ErrorDisplayTyped:
-			colorText += string(differ[i])
 		case settings.ErrorDisplayText:
+			colorText += string(differ[i])
+		case settings.ErrorDisplayTyped:
 			if i < len(toColor) {
 				colorText += string(toColor[i])
 			}
