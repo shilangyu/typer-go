@@ -8,6 +8,7 @@ import (
 	"github.com/rivo/tview"
 	"github.com/shilangyu/typer-go/game"
 	"github.com/shilangyu/typer-go/settings"
+	"github.com/shilangyu/typer-go/utils"
 )
 
 // CreateSingleplayer creates singleplayer screen widgets
@@ -31,9 +32,9 @@ func CreateSingleplayer(app *tview.Application) error {
 			SetDoneFunc(func(index int, label string) {
 				switch index {
 				case 0:
-					CreateSingleplayer(app)
+					utils.Check(CreateSingleplayer(app))
 				case 1:
-					CreateWelcome(app)
+					utils.Check(CreateWelcome(app))
 				}
 			}), false, false)
 
